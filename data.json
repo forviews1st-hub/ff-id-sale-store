@@ -4,11 +4,8 @@
     "title": "Level 65 | Prime 8 Grandmaster",
     "price": 4000,
     "status": "Available",
-    "mainImage": "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg",
-    "gallery": [
-      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg",
-      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
-    ],
+    "folder": "id1", 
+    "images": ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg"],
     "level": 65,
     "rank": "Grandmaster",
     "emailBind": "Yes (Recoverable)",
@@ -22,10 +19,8 @@
     "title": "Level 54 | Heroic",
     "price": 1200,
     "status": "Sold",
-    "mainImage": "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg",
-    "gallery": [
-      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
-    ],
+    "folder": "id2",
+    "images": ["1.jpg", "2.jpg", "3.jpg"],
     "level": 54,
     "rank": "Heroic",
     "emailBind": "Yes",

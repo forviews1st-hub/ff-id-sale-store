@@ -9,11 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   
   <style>
+    /* --- COMPLETE PREMIUM CSS --- */
     :root { --deep-yellow-grad: linear-gradient(180deg, #FFC107 0%, #FF9800 100%); --green-grad: linear-gradient(180deg, #0CFF00 0%, #09B300 100%); }
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Poppins', sans-serif; background: #000; min-height: 100vh; color: #1A1A1A; overflow-x: hidden; position: relative; }
     
-    /* RAW GITHUB BACKGROUND */
     body::before { content: ''; position: fixed; inset: 0; background: url('https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
     body::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: -1; }
     
@@ -72,11 +72,6 @@
     .pulse-action-row { font-size: 12px; color: #4A4A4A; font-weight: 500; }
     .pulse-action-row .card-name { color: #FF0000; font-weight: 700; }
 
-    /* SEARCH & FILTER */
-    .controls-bar { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
-    .search-input { flex: 1; min-width: 200px; padding: 12px 16px; border-radius: 12px; border: 2px solid #FFC107; font-size: 14px; font-weight: 600; outline: none; background: #FFF; color: #1A1A1A; }
-    .filter-select { padding: 12px 16px; border-radius: 12px; border: 2px solid #FFC107; font-size: 14px; font-weight: 600; outline: none; background: #FFF; color: #1A1A1A; cursor: pointer; }
-
     /* HEADING ROW */
     .heading-row { margin-bottom: 18px; padding: 20px 24px; background: var(--deep-yellow-grad); border-radius: 26px; box-shadow: 0 8px 0 #C77A00; border: 2px solid rgba(255,255,255,0.4); }
     .heading-row h1 { font-size: 26px; font-weight: 800; color: #1A1A1A; }
@@ -117,6 +112,8 @@
 
     /* REVIEWS */
     .reviews-section { margin-bottom: 36px; }
+    .reviews-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+    .write-review-btn { background: var(--deep-yellow-grad); color: #1A1A1A; border: 2px solid #FFF; padding: 10px 20px; border-radius: 100px; font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #C77A00; }
     .reviews-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; }
     @media (min-width: 700px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
     .review-card { background: #FFFFFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -142,11 +139,14 @@
     .modal-close { position: absolute; top: 12px; right: 12px; background: #FFC107; border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 20px; cursor: pointer; color: #1A1A1A; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #C77A00; font-weight: 800; }
     .modal-body { padding: 24px 20px; }
     
-    .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+    /* GALLERY SLIDER */
+    .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; }
     .gallery-container img { width: 100%; height: 100%; object-fit: contain; }
     .gallery-thumbs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
-    .gallery-thumbs img { width: 60px; height: 40px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 2px solid transparent; }
-    .gallery-thumbs img.active { border-color: #FFC107; }
+    .gallery-thumbs img { width: 60px; height: 40px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: 0.2s; }
+    .gallery-thumbs img:hover { opacity: 1; }
+    .gallery-thumbs img.active { border-color: #FFC107; opacity: 1; }
+    
     .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
     .detail-box { background: #FFF; padding: 10px; border-radius: 10px; border: 1px solid #FFE082; box-shadow: 0 2px 0 #E0A000; }
     .detail-label { font-size: 10px; color: #8B5A00; font-weight: 800; text-transform: uppercase; }
@@ -201,7 +201,6 @@
 </head>
 <body>
 
-  <!-- RAW GITHUB AUDIO -->
   <audio id="bgMusic" loop preload="auto" muted playsinline>
     <source src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/audio/bg-music.mp3" type="audio/mpeg">
   </audio>
@@ -232,7 +231,6 @@
       </div>
       <div class="trusted-by-card">
         <div class="trusted-by-avatars">
-          <!-- RAW AVATARS -->
           <div class="trusted-by-avatar"><img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg"></div>
           <div class="trusted-by-avatar"><img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"></div>
           <div class="trusted-by-avatar"><img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/0416c2de-9104-4c01-a85e-a250e1a6b4ad.jpg"></div>
@@ -264,21 +262,14 @@
       <p>Choose your desired ID and buy securely</p>
     </div>
 
-    <div class="controls-bar scroll-reveal">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search by Level, Rank, or Title...">
-      <select id="filterSelect" class="filter-select">
-        <option value="all">Sort by: Default</option>
-        <option value="price-low">Price: Low to High</option>
-        <option value="price-high">Price: High to Low</option>
-        <option value="level-high">Level: High to Low</option>
-      </select>
-    </div>
-
     <div class="product-grid scroll-reveal" id="productGrid"></div>
 
     <section class="reviews-section scroll-reveal">
-      <div class="heading-row">
-        <h1>Trusted by Thousands</h1><p>What our customers say after buying IDs</p>
+      <div class="reviews-header">
+        <div class="heading-row" style="margin-bottom:0; width:100%;">
+          <h1>Trusted by Thousands</h1><p>What our customers say after buying IDs</p>
+        </div>
+        <button class="write-review-btn" id="writeReviewBtn">✏️ Write a Review</button>
       </div>
       <div class="reviews-grid" id="reviewsGrid"></div>
       <button class="load-more-btn" id="loadMoreBtn">Load More Reviews</button>
@@ -345,7 +336,6 @@
         </div>
         <div class="qr-box">
           <div class="qr-timer" id="qrTimer">⏳ Expires in: 05:00</div>
-          <!-- RAW QR -->
           <img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/qr-code.png">
           <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Scan with any UPI app</p>
         </div>
@@ -366,6 +356,7 @@
       <button class="action-btn" id="contactSellerBtn" style="background: var(--green-grad); margin-bottom: 10px;">💬 Message Seller</button>
       <button class="action-btn" onclick="closeModal('successOverlay')" style="background: var(--deep-yellow-grad); box-shadow: 0 4px 0 #C77A00;">Close</button>
     </div>
+    <div class="confetti-container" id="confettiContainer"></div>
   </div>
 
   <div class="modal-overlay" id="reviewOverlay">
@@ -411,23 +402,11 @@
   <div class="live-notif-container" id="liveNotifContainer"></div>
 
   <script>
-    // RAW GITHUB LINKS
+    // Naya Base URL structure
+    const BASE_URL = "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/id-images/";
+    
     const fallbackData = [
-      { 
-        id: "id1", 
-        title: "Level 65 | Prime 8 Grandmaster", 
-        price: 4000, 
-        status: "Available", 
-        mainImage: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg", 
-        gallery: ["https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg"], 
-        level: 65, 
-        rank: "Grandmaster", 
-        emailBind: "Yes (Recoverable)", 
-        fbBind: "No", 
-        evoGuns: "15 (M1014, MP40)", 
-        bundles: "5 Mythic Bundles", 
-        tags: ["Rare", "Prime 8"] 
-      }
+      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", images: ["1.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
     ];
     
     let accountsData = [];
@@ -443,15 +422,32 @@
       startLiveFeed();
       initScrollReveal();
       checkMusic();
+      renderReviews();
     };
 
     async function loadAccounts() {
       try {
         const res = await fetch('data.json');
         if (!res.ok) throw new Error("File not found");
-        accountsData = await res.json();
+        let rawData = await res.json();
+        
+        // Data ko process karke direct image link banana
+        accountsData = rawData.map(acc => {
+          const folderPath = acc.folder ? acc.folder + '/' : '';
+          const imgList = acc.images || [];
+          
+          const mainImg = imgList.length > 0 ? BASE_URL + folderPath + imgList[0] : 'placeholder.jpg';
+          const gallery = imgList.map(img => BASE_URL + folderPath + img);
+          
+          return { ...acc, mainImage: mainImg, gallery: gallery };
+        });
+
       } catch (e) {
-        accountsData = fallbackData;
+        accountsData = fallbackData.map(acc => {
+            const folderPath = acc.folder ? acc.folder + '/' : '';
+            const mainImg = BASE_URL + folderPath + acc.images[0];
+            return { ...acc, mainImage: mainImg, gallery: [mainImg] };
+        });
       }
       filteredData = [...accountsData];
       renderGrid();
@@ -461,12 +457,12 @@
       const grid = document.getElementById('productGrid');
       grid.innerHTML = '';
       if(filteredData.length === 0) {
-        grid.innerHTML = '<p style="color:#FFF; text-align:center; width:100%;">No IDs found for this search.</p>';
+        grid.innerHTML = '<p style="color:#FFF; text-align:center; width:100%;">No IDs found.</p>';
         return;
       }
       filteredData.forEach(acc => {
         const isSold = acc.status === 'Sold';
-        const tagsHtml = acc.tags.map(t => `<span class="tag">${t}</span>`).join('');
+        const tagsHtml = acc.tags ? acc.tags.map(t => `<span class="tag">${t}</span>`).join('') : '';
         const card = document.createElement('div');
         card.className = `grid-card ${isSold ? 'sold' : ''}`;
         
@@ -489,19 +485,6 @@
         `;
         grid.appendChild(card);
       });
-    }
-
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('filterSelect').addEventListener('change', applyFilters);
-
-    function applyFilters() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const sort = document.getElementById('filterSelect').value;
-      filteredData = accountsData.filter(acc => acc.title.toLowerCase().includes(query) || acc.rank.toLowerCase().includes(query) || acc.level.toString().includes(query));
-      if(sort === 'price-low') filteredData.sort((a,b) => a.price - b.price);
-      if(sort === 'price-high') filteredData.sort((a,b) => b.price - a.price);
-      if(sort === 'level-high') filteredData.sort((a,b) => b.level - a.level);
-      renderGrid();
     }
 
     function openDetails(id) {
@@ -636,12 +619,7 @@
 
     const firstNames = ['Aarav', 'Vivaan', 'Aditya', 'Arjun', 'Rohan', 'Karan', 'Rahul', 'Amit', 'Vikram', 'Raj', 'Suraj', 'Priya', 'Sneha'];
     const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Pune', 'Hyderabad', 'Jaipur', 'Chennai'];
-    
-    // RAW AVATARS
-    const avatars = [
-      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg", 
-      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
-    ];
+    const avatars = ["https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg", "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"];
     const avatarFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23FFC107'/><text x='50%' y='50%' font-size='20' text-anchor='middle' dy='.3em'>👤</text></svg>";
 
     function startLiveFeed() {
@@ -695,10 +673,12 @@
     }
 
     const reviewsGrid = document.getElementById('reviewsGrid');
-    // RAW REVIEWS AVATARS
     let reviewsData = [
       { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber1.png" },
-      { name: "Rahul Sharma", city: "Delhi", text: "Payment karte hi WhatsApp par account details mil gayi. Fast service 💯", acc: "Prime 8 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review1.png" }
+      { name: "Rahul Sharma", city: "Delhi", text: "Payment karte hi WhatsApp par account details mil gayi. Fast service 💯", acc: "Prime 8 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review1.png" },
+      { name: "Tonde Gamer", city: "Nepal", text: "Yaar, maine pehle socha tha ki online ID lena risky hoga, lekin ye seller ekdum genuine nikla. 😎", acc: "Level 72 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber2.png" },
+      { name: "Gyan Gaming", city: "Kolkata", text: "Payment ke baad ID details turant mil gayi. Highly recommended! 👍", acc: "Level 60 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber3.png" },
+      { name: "Lokesh Gamer", city: "Hyderabad", text: "Sab kuch instantly ho gaya. Trustworthy seller. ✅", acc: "Level 54 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber4.png" }
     ];
 
     function renderReviews() {
@@ -717,7 +697,6 @@
         reviewsGrid.appendChild(card);
       });
     }
-    renderReviews();
 
     function submitReview() {
       const name = document.getElementById('revName').value;
@@ -730,6 +709,10 @@
       closeModal('reviewOverlay');
       showToast("Review submitted successfully!");
     }
+
+    document.getElementById('writeReviewBtn').onclick = () => {
+      document.getElementById('reviewOverlay').style.display = 'flex';
+    };
 
     document.getElementById('loadMoreBtn').onclick = function() {
       this.textContent = "Loading...";
@@ -772,8 +755,8 @@
     }
 
     function spawnConfetti() {
-      const cont = document.createElement('div'); cont.className = 'confetti-container';
-      document.body.appendChild(cont);
+      const cont = document.getElementById('confettiContainer');
+      cont.innerHTML = '';
       const colors = ['#FFC107', '#FF9800', '#FF0000', '#0CFF00'];
       for(let i=0; i<50; i++) {
         const p = document.createElement('div'); p.className = 'confetti-piece';
@@ -783,7 +766,7 @@
         p.style.animationDelay = Math.random() + 's';
         cont.appendChild(p);
       }
-      setTimeout(() => cont.remove(), 4000);
+      setTimeout(() => cont.innerHTML = '', 4000);
     }
 
     function initScrollReveal() {
