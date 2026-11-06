@@ -4,10 +4,10 @@
     "title": "Level 65 | Prime 8 Grandmaster",
     "price": 4000,
     "status": "Available",
-    "mainImage": "https://cdn.jsdelivr.net/gh/forviews1st-hub/ff-id-sale-store@main/avatars/020e7831d949cbc080e9037106bbbd7.jpg",
+    "mainImage": "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg",
     "gallery": [
-      "https://cdn.jsdelivr.net/gh/forviews1st-hub/ff-id-sale-store@main/avatars/020e7831d949cbc080e9037106bbbd7.jpg",
-      "https://cdn.jsdelivr.net/gh/forviews1st-hub/ff-id-sale-store@main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
+      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg",
+      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
     ],
     "level": 65,
     "rank": "Grandmaster",
@@ -22,9 +22,9 @@
     "title": "Level 54 | Heroic",
     "price": 1200,
     "status": "Sold",
-    "mainImage": "https://cdn.jsdelivr.net/gh/forviews1st-hub/ff-id-sale-store@main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg",
+    "mainImage": "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg",
     "gallery": [
-      "https://cdn.jsdelivr.net/gh/forviews1st-hub/ff-id-sale-store@main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
+      "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"
     ],
     "level": 54,
     "rank": "Heroic",
