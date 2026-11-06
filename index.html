@@ -13,8 +13,8 @@
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Poppins', sans-serif; background: #000; min-height: 100vh; color: #1A1A1A; overflow-x: hidden; position: relative; }
     
-    /* PURANE REPO KA BACKGROUND */
-    body::before { content: ''; position: fixed; inset: 0; background: url('https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
+    /* LOCAL BACKGROUND PATH */
+    body::before { content: ''; position: fixed; inset: 0; background: url('images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
     body::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: -1; }
     
     .img-blur { filter: blur(12px); transition: filter 0.4s ease; }
@@ -150,7 +150,7 @@
     
     .payment-amount-box { background: #FFF; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 2px dashed #FFC107; }
     .qr-box { text-align: center; margin-bottom: 15px; position: relative; }
-    /* QR PATH NAYA REPO MEIN LOCAL RAKHA HAI */
+    /* LOCAL QR PATH */
     .qr-box img { width: 200px; border-radius: 12px; border: 3px solid #FFC107; padding: 6px; background: #FFF; }
     .qr-timer { font-size: 12px; font-weight: 800; color: #FF0000; margin-bottom: 5px; }
     
@@ -191,9 +191,9 @@
 </head>
 <body>
 
-  <!-- AUDIO PURANE REPO SE -->
+  <!-- LOCAL AUDIO PATH -->
   <audio id="bgMusic" loop preload="auto" muted playsinline>
-    <source src="https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/audio/bg-music.mp3" type="audio/mpeg">
+    <source src="audio/bg-music.mp3" type="audio/mpeg">
   </audio>
 
   <header class="site-header">
@@ -222,10 +222,10 @@
       </div>
       <div class="trusted-by-card">
         <div class="trusted-by-avatars">
-          <!-- PURANE REPO SE IMAGES -->
-          <div class="trusted-by-avatar"><img src="https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/020e7831d949cbc080e9037106bbbd7.jpg"></div>
-          <div class="trusted-by-avatar"><img src="https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"></div>
-          <div class="trusted-by-avatar"><img src="https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/0416c2de-9104-4c01-a85e-a250e1a6b4ad.jpg"></div>
+          <!-- LOCAL AVATAR PATHS -->
+          <div class="trusted-by-avatar"><img src="avatars/020e7831d949cbc080e9037106bbbd7.jpg"></div>
+          <div class="trusted-by-avatar"><img src="avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"></div>
+          <div class="trusted-by-avatar"><img src="avatars/0416c2de-9104-4c01-a85e-a250e1a6b4ad.jpg"></div>
         </div>
         <div class="trusted-by-text">+9,935 buyers trust us</div>
       </div>
@@ -335,7 +335,7 @@
         </div>
         <div class="qr-box">
           <div class="qr-timer" id="qrTimer">⏳ Expires in: 05:00</div>
-          <!-- QR PATH NAYE REPO KE LIYE LOCAL HAI -->
+          <!-- LOCAL QR PATH -->
           <img src="qr-code.png">
           <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Scan with any UPI app</p>
         </div>
@@ -402,7 +402,7 @@
 
   <script>
     const fallbackData = [
-      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", mainImage: "https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/020e7831d949cbc080e9037106bbbd7.jpg", gallery: ["https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/020e7831d949cbc080e9037106bbbd7.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes (Recoverable)", fbBind: "No", evoGuns: "15 (M1014, MP40)", bundles: "5 Mythic Bundles", tags: ["Rare", "Prime 8"] }
+      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", mainImage: "avatars/020e7831d949cbc080e9037106bbbd7.jpg", gallery: ["avatars/020e7831d949cbc080e9037106bbbd7.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes (Recoverable)", fbBind: "No", evoGuns: "15 (M1014, MP40)", bundles: "5 Mythic Bundles", tags: ["Rare", "Prime 8"] }
     ];
     
     let accountsData = [];
@@ -560,8 +560,8 @@
     }
 
     document.getElementById('contactSellerBtn').onclick = () => {
-      // APNA WHATSAPP NUMBER YAHAN DAALO
-      const sellerPhone = "919876543210"; 
+      // APNA WHATSAPP NUMBER YAHAN DAALO (91 ke sath)
+      const sellerPhone = "919142152317"; 
       const msg = `Hi, I just purchased ${currentOrder.title}. My Txn ID is ${currentOrder.txn}. Please handover the ID.`;
       window.open(`https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     };
@@ -609,8 +609,8 @@
 
     const firstNames = ['Aarav', 'Vivaan', 'Aditya', 'Arjun', 'Rohan', 'Karan', 'Rahul', 'Amit', 'Vikram', 'Raj', 'Suraj', 'Priya', 'Sneha'];
     const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Pune', 'Hyderabad', 'Jaipur', 'Chennai'];
-    // PURANE REPO SE AVATARS
-    const avatars = ["https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/020e7831d949cbc080e9037106bbbd7.jpg", "https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"];
+    // LOCAL AVATARS
+    const avatars = ["avatars/020e7831d949cbc080e9037106bbbd7.jpg", "avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"];
 
     function startLiveFeed() {
       const list = document.getElementById('pulseList');
@@ -663,10 +663,10 @@
     }
 
     const reviewsGrid = document.getElementById('reviewsGrid');
-    // PURANE REPO SE REVIEWS KE AVATARS
+    // LOCAL REVIEWS AVATARS
     let reviewsData = [
-      { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/reviews/youtuber1.png" },
-      { name: "Rahul Sharma", city: "Delhi", text: "Payment karte hi WhatsApp par account details mil gayi. Fast service 💯", acc: "Prime 8 ID", av: "https://cdn.jsdelivr.net/gh/forviews1st-hub/Diamond-Top-up-@main/reviews/review1.png" }
+      { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "reviews/youtuber1.png" },
+      { name: "Rahul Sharma", city: "Delhi", text: "Payment karte hi WhatsApp par account details mil gayi. Fast service 💯", acc: "Prime 8 ID", av: "reviews/review1.png" }
     ];
 
     function renderReviews() {
