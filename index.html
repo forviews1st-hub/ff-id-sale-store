@@ -115,8 +115,10 @@
     .reviews-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; }
     @media (min-width: 700px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
     
-    .review-card { background: #FFFFFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; }
-    .review-card.youtuber-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #1D9BF0, #0A7BC7, #1D9BF0); border-radius: 20px 20px 0 0; }
+    .review-card { background: #FFFFFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
+    /* Blue line fix (Using border-top instead of pseudo-element) */
+    .review-card.youtuber-card { border-top: 5px solid #1D9BF0; }
+    
     .review-header { display: flex; gap: 10px; margin-bottom: 10px; }
     .review-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: #FDEEC8; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -441,7 +443,8 @@
           const folderPath = acc.folder ? acc.folder + '/' : '';
           const imgList = acc.images || [];
           
-          const mainImg = imgList.length > 0 ? BASE_URL + folderPath + imgList[0] : 'https://via.placeholder.com/400x250?text=No+Image';
+          // Image link generator
+          const mainImg = imgList.length > 0 ? BASE_URL + folderPath + imgList[0] : 'https://via.placeholder.com/400x250/F3F4F6/FFC107?text=No+Image';
           const gallery = imgList.map(img => BASE_URL + folderPath + img);
           
           return { ...acc, mainImage: mainImg, gallery: gallery };
@@ -506,9 +509,14 @@
       const thumbs = document.getElementById('galleryThumbs');
       mainImg.src = currentAccount.gallery[0];
       thumbs.innerHTML = '';
+      
+      const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
+      
       currentAccount.gallery.forEach((img, i) => {
         const t = document.createElement('img');
-        t.src = img; if(i===0) t.classList.add('active');
+        t.src = img; 
+        if(i===0) t.classList.add('active');
+        t.onerror = function() { this.src = fallbackImg; };
         t.onclick = () => { mainImg.src = img; document.querySelectorAll('.gallery-thumbs img').forEach(el=>el.classList.remove('active')); t.classList.add('active'); };
         thumbs.appendChild(t);
       });
