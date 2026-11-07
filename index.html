@@ -19,6 +19,13 @@
     .img-blur { filter: blur(12px); transition: filter 0.4s ease; }
     img:not(.img-blur) { filter: blur(0); transition: filter 0.4s ease; }
 
+    /* 3D SVG ICONS */
+    .icon-3d { width: 1.1em; height: 1.1em; vertical-align: -0.18em; display: inline-block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
+    .trust-feature-card .tf-icon-wrap .icon-3d { width: 1.6em; height: 1.6em; }
+    .review-meta .icon-3d { width: 1.05em; height: 1.05em; vertical-align: -0.18em; }
+    .review-purchased .icon-3d { width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+    .review-helpful .icon-3d, .review-more-btn .icon-3d { width: 1.15em; height: 1.15em; vertical-align: -0.24em; }
+
     /* HEADER */
     .site-header { position: relative; z-index: 900; background: var(--deep-yellow-grad); border-radius: 28px; box-shadow: 0 8px 0 #C77A00, 0 15px 35px rgba(0,0,0,0.35); margin: 16px 12px 6px; border: 2px solid rgba(255,255,255,0.4); backdrop-filter: blur(12px); }
     .site-header-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; gap: 10px; }
@@ -175,7 +182,6 @@
     .action-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #076B00; }
     .action-btn:disabled { background: #CCC; box-shadow: 0 6px 0 #999; cursor: not-allowed; }
     
-    /* Payment Box Fix */
     .payment-amount-box { 
       background: linear-gradient(135deg, #FFFDF5 0%, #FFF6E0 100%);
       padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 15px; 
@@ -202,7 +208,6 @@
     .toast { background: #FFFFFF; color: #1A1A1A; padding: 14px 20px; border-radius: 18px; box-shadow: 0 10px 26px rgba(199,122,0,0.15), 0 5px 0 #E0A000; font-size: 13px; font-weight: 700; animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* Notification Fix (Added Thumbnail & Price) */
     .live-notif-container { position: fixed; top: 80px; right: 16px; z-index: 2200; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: 320px; }
     .live-notif { background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 28px rgba(199,122,0,0.15), 0 4px 0 rgba(242,226,192,0.6); animation: notifIn 0.4s ease, notifOut 0.4s ease 10.4s forwards; pointer-events: auto; overflow: hidden; transition: transform 0.2s, opacity 0.2s; }
     .live-notif.swiping { animation: none; }
@@ -468,19 +473,40 @@
   <script>
     const BASE_URL = "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/id-images/";
     
+    // --- 3D SVG ICONS ---
+    var ICONS = {
+      eye: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icEye" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5555"/><stop offset="1" stop-color="#AA0000"/></linearGradient></defs><path d="M12 5C7 5 3 9 2 12C3 15 7 19 12 19C17 19 21 15 22 12C21 9 17 5 12 5Z" fill="url(#icEye)"/><circle cx="12" cy="12" r="4.2" fill="#FFFFFF"/><circle cx="12" cy="12" r="2.3" fill="#AA0000"/><circle cx="11" cy="11" r="0.8" fill="#FFFFFF"/></svg>',
+      eyeWhite: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 5C7 5 3 9 2 12C3 15 7 19 12 19C17 19 21 15 22 12C21 9 17 5 12 5Z" fill="#FFFFFF"/><circle cx="12" cy="12" r="4.2" fill="#FFAAAA"/><circle cx="12" cy="12" r="2.3" fill="#FFFFFF"/><circle cx="11" cy="11" r="0.8" fill="#FFFFFF"/></svg>',
+      controller: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icCtrlA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><path d="M6 8C3 8 1.5 10 1.5 13C1.5 16 3 18 5 18C6.5 18 7.5 17 8.5 16H15.5C16.5 17 17.5 18 19 18C21 18 22.5 16 22.5 13C22.5 10 21 8 18 8Z" fill="url(#icCtrlA)"/><rect x="5" y="11.5" width="4" height="1.3" rx="0.6" fill="#FFFFFF"/><rect x="6.35" y="10.2" width="1.3" height="4" rx="0.6" fill="#FFFFFF"/><circle cx="17" cy="12" r="1" fill="#FFFFFF"/><circle cx="18.8" cy="13.8" r="1" fill="#FFFFFF"/></svg>',
+      trophy: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icTrophyA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M6 3H18V6C18 10 15.5 13 12 13C8.5 13 6 10 6 6Z" fill="url(#icTrophyA)"/><path d="M6 5H3V7C3 8.5 4 9.5 6 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M18 5H21V7C21 8.5 20 9.5 18 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><rect x="10.5" y="13" width="3" height="4" fill="#E6A100"/><rect x="8" y="17" width="8" height="2.5" rx="0.8" fill="url(#icTrophyA)"/><rect x="7" y="19.5" width="10" height="1.8" rx="0.9" fill="#B36A00"/><ellipse cx="10" cy="5.5" rx="1.2" ry="0.8" fill="#FFFFFF" opacity="0.6"/></svg>',
+      check: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icCheck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#icCheck)"/><path d="M7 12.2L10.5 15.5L17 9" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="2.5" fill="#FFFFFF" opacity="0.25"/></svg>',
+      lock: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icLockA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M7 10V7C7 4.5 9 3 12 3C15 3 17 4.5 17 7V10" stroke="#B36A00" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2" fill="url(#icLockA)"/><circle cx="12" cy="15" r="1.7" fill="#8B5A00"/><rect x="11.2" y="15" width="1.6" height="3.5" rx="0.8" fill="#8B5A00"/><ellipse cx="9" cy="12.5" rx="2" ry="1" fill="#FFFFFF" opacity="0.4"/></svg>',
+      thumbUp: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icThumb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M3 21H6V10H3V21ZM21 11C21 9.9 20.1 9 19 9H14L15.5 3.5C15.5 3.3 15.5 3.1 15.4 2.9L14.4 2L8.4 8C8.1 8.3 8 8.6 8 9V19C8 20.1 8.9 21 10 21H18C18.8 21 19.5 20.5 19.8 19.8L22 12.8C22 12.5 22 12.3 22 12V11H21Z" fill="url(#icThumb)"/><ellipse cx="11" cy="6" rx="2" ry="1.2" fill="#FFFFFF" opacity="0.4"/></svg>',
+      pin: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icPin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5555"/><stop offset="1" stop-color="#AA0000"/></linearGradient></defs><path d="M12 2C7.6 2 4 5.6 4 10C4 16 12 22 12 22C12 22 20 16 20 10C20 5.6 16.4 2 12 2Z" fill="url(#icPin)"/><circle cx="12" cy="10" r="3.2" fill="#FFFFFF"/><circle cx="11" cy="9" r="1" fill="#AA0000" opacity="0.5"/></svg>',
+      clock: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icClock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8FF"/><stop offset="1" stop-color="#0066CC"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#icClock)"/><circle cx="12" cy="12" r="8.5" fill="#FFFFFF" opacity="0.15"/><path d="M12 6V12L16 14" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1" fill="#FFFFFF"/></svg>',
+      user: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icUser" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8FF"/><stop offset="1" stop-color="#0066CC"/></linearGradient></defs><circle cx="12" cy="8" r="4" fill="url(#icUser)"/><path d="M4 20C4 16 8 14 12 14C16 14 20 16 20 20V21H4V20Z" fill="url(#icUser)"/><circle cx="12" cy="8" r="4" fill="#FFFFFF" opacity="0.3"/><ellipse cx="10" cy="6" rx="1.5" ry="1" fill="#FFFFFF" opacity="0.5"/></svg>',
+      userWhite: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#FFFFFF"/><path d="M4 20C4 16 8 14 12 14C16 14 20 16 20 20V21H4V20Z" fill="#FFFFFF"/><circle cx="12" cy="8" r="4" fill="#FFFFFF" opacity="0.3"/><ellipse cx="10" cy="6" rx="1.5" ry="1" fill="#FFFFFF" opacity="0.5"/></svg>'
+    };
+
+    // --- CORE VARIABLES ---
     const fallbackData = [
       { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", images: ["1.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
     ];
-    
     let accountsData = [];
     let filteredData = [];
     let currentAccount = null;
     let currentOrder = null;
     let qrTimerInterval = null;
     let qrTimeLeft = 300;
-    let selectedPhotoDataURL = null; // For review photo
+    let selectedPhotoDataURL = null;
     let notifInterval = null;
 
+    let _streamState = null;
+    var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
+    var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
+    var BASE_PURCHASES_PER_HOUR = 10; // Slower fake sales for IDs
+
+    // --- INITIALIZATION ---
     window.onload = async () => {
       loadProfile();
       await loadAccounts();
@@ -491,8 +517,17 @@
       renderReviews();
       initViewerCounts();
       fetchDynamicAvatars();
+      injectIcons();
+      injectButtonLabels();
+      initCountdowns();
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
+      setInterval(fluctuateViewers, 5000);
+      setInterval(purchaseTick, 10000); // Check for new fake purchases
+      setInterval(updateNotificationTimes, 30000);
     };
 
+    // --- MAIN DATA LOADING ---
     async function loadAccounts() {
       try {
         const res = await fetch('data.json');
@@ -518,6 +553,7 @@
       }
       filteredData = [...accountsData];
       renderGrid();
+      initViewerCounts(); // Init viewers after loading IDs
     }
 
     function renderGrid() {
@@ -547,7 +583,7 @@
             <div class="id-title">${acc.title}</div>
             <div class="id-bind-status"><span>📧 Email: ${acc.emailBind}</span><span>📱 FB: ${acc.fbBind}</span></div>
             <div class="card-bottom-row" style="margin-top: 4px;">
-              <div class="live-viewers-badge" data-design-id="${acc.id}"><span class="live-pulse-dot"></span><span class="eye">👁️</span><span class="vcount">${viewerBase}</span></div>
+              <div class="live-viewers-badge" data-design-id="${acc.id}"><span class="live-pulse-dot"></span><span class="eye">${ICONS.eyeWhite}</span><span class="vcount">${viewerBase}</span></div>
             </div>
             <button class="view-btn" onclick="${isSold ? '' : `openDetails('${acc.id}')`}" ${isSold ? 'disabled' : ''}>
               ${isSold ? 'Sold Out' : 'View Details & Buy'}
@@ -556,6 +592,7 @@
         `;
         grid.appendChild(card);
       });
+      applyImageBlur();
     }
 
     function openDetails(id) {
@@ -584,8 +621,11 @@
         thumbs.appendChild(t);
       });
       document.getElementById('detailsOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
+      applyImageBlur();
     }
 
+    // --- CHECKOUT & PAYMENT ---
     document.getElementById('detailsBuyBtn').onclick = () => {
       closeModal('detailsOverlay');
       document.getElementById('checkoutPrice').textContent = '₹' + currentAccount.price;
@@ -600,6 +640,7 @@
         document.getElementById('proceedToPayBtn').style.background = '#CCC';
       }
       document.getElementById('checkoutOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
     };
 
     document.getElementById('buyerPhone').addEventListener('input', function() {
@@ -614,6 +655,7 @@
       document.getElementById('payAmountText').textContent = '₹' + currentAccount.price;
       document.getElementById('txnIdInput').value = '';
       document.getElementById('paymentOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
       startQrTimer();
     };
 
@@ -623,8 +665,14 @@
       if(txn.length < 8) { showAlert("Invalid ID", "Enter valid Transaction ID.", "🔒"); return; }
       clearInterval(qrTimerInterval);
       closeModal('paymentOverlay');
-      currentOrder = { title: currentAccount.title, txn: txn, phone: document.getElementById('buyerPhone').value };
+      document.body.classList.remove('modal-open');
+      
+      currentOrder = { title: currentAccount.title, txn: txn, phone: document.getElementById('buyerPhone').value, price: currentAccount.price, id: currentAccount.id };
       document.getElementById('successOverlay').style.display = 'flex';
+      
+      recordUserPurchase(currentAccount.id);
+      renderHeroCounters();
+      triggerUserOwnNotification();
       spawnConfetti();
       playOrderSound();
     };
@@ -745,7 +793,7 @@
         viewerState[d.id].current = viewerState[d.id].base;
       });
     }
-    setInterval(() => {
+    function fluctuateViewers() {
       accountsData.forEach(d => {
         let s = viewerState[d.id];
         if(!s) return;
@@ -754,64 +802,94 @@
         let badge = document.querySelector(`.live-viewers-badge[data-design-id="${d.id}"] .vcount`);
         if(badge) badge.textContent = s.current;
       });
-    }, 5000);
+    }
 
-    // --- REVIEWS LOGIC (With LocalStorage & Compression) ---
+    // --- REVIEWS LOGIC (With LocalStorage & Time-based counts) ---
     const reviewsGrid = document.getElementById('reviewsGrid');
+    const USER_REVIEWS_KEY = 'ff_id_user_reviews';
+    const HELPFUL_STATES_KEY = 'ff_id_helpful_states';
+    
     const staticReviews = [
-      { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber1.png", isYouTuber: true, helpful: 1247, more: 8932 },
-      { name: "Tonde Gamer", city: "Nepal", text: "Yaar, maine pehle socha tha ki online ID lena risky hoga, lekin ye seller ekdum genuine nikla. 😎", acc: "Level 72 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber2.png", isYouTuber: true, helpful: 2156, more: 12480 },
-      { name: "Gyan Gaming", city: "Kolkata", text: "Payment ke baad ID details turant mil gayi. Highly recommended! 👍", acc: "Level 60 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber3.png", isYouTuber: true, helpful: 876, more: 5432 },
-      { name: "Lokesh Gamer", city: "Hyderabad", text: "Sab kuch instantly ho gaya. Trustworthy seller. ✅", acc: "Level 54 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber4.png", isYouTuber: true, helpful: 1876, more: 9543 },
-      { name: "Sooneeta", city: "Nepal", text: "Maine aur mere bhai ne dono ne is seller se ID li. Dono baar bilkul sahi mile. Thank you! 😊", acc: "Level 50 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber5.png", isYouTuber: true, helpful: 654, more: 3421 },
-      { name: "Anjali Desai", city: "Delhi", text: "Payment karte hi turant ID mil gayi. Bilkul real service hai 🔥", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review1.png", helpful: 47, more: 1247 },
-      { name: "Rohit Yadav", city: "Mumbai", text: "ID buy ki, sahi mili aur usi se maine apna account set kar liya. Bhai yeh toh mast hai 💯", acc: "Level 54 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review2.png", helpful: 89, more: 3891 },
-      { name: "Rahul Sharma", city: "Bangalore", text: "Payment ke 1 minute ke andar ID mil gayi. Genuine aur fast seller hai. Highly recommended ✅", acc: "Level 70 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review3.png", helpful: 156, more: 5788 },
-      { name: "Pilu Tonde", city: "Pune", text: "ID mil gayi. Achha hai par delivery mein thoda time laga. Baaki sab badhiya 👍", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review4.png", helpful: 23, more: 654, sellerReply: 'Thanks Pilu bhai! Next order mein fast delivery ka promise 🙏' },
-      { name: "Ramu Gamer", city: "Hyderabad", text: "Mene ID li aur account successful bhi ho gaya. Sab kuch easily ho gaya. Paisa vasool 🔥🔥", acc: "Level 50 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review5.png", helpful: 67, more: 2135 },
-      { name: "Karan Mehta", city: "Jaipur", text: "ID buy karne ke baad maine apna account set kiya, sab kuch bina kisi problem ke ho gaya! Best seller 💯", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review6.png", helpful: 112, more: 4230, sellerReply: 'Thanks Karan! Aapka support humesha 🙏' }
+      { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber1.png", isYouTuber: true, helpful: 1247, more: 8932, time: '9 days ago' },
+      { name: "Tonde Gamer", city: "Nepal", text: "Yaar, maine pehle socha tha ki online ID lena risky hoga, lekin ye seller ekdum genuine nikla. 😎", acc: "Level 72 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber2.png", isYouTuber: true, helpful: 2156, more: 12480, time: '17 days ago' },
+      { name: "Gyan Gaming", city: "Kolkata", text: "Payment ke baad ID details turant mil gayi. Highly recommended! 👍", acc: "Level 60 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber3.png", isYouTuber: true, helpful: 876, more: 5432, time: '28 days ago' },
+      { name: "Lokesh Gamer", city: "Hyderabad", text: "Sab kuch instantly ho gaya. Trustworthy seller. ✅", acc: "Level 54 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber4.png", isYouTuber: true, helpful: 1876, more: 9543, time: '7 days ago' },
+      { name: "Sooneeta", city: "Nepal", text: "Maine aur mere bhai ne dono ne is seller se ID li. Dono baar bilkul sahi mile. Thank you! 😊", acc: "Level 50 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber5.png", isYouTuber: true, helpful: 654, more: 3421, time: '21 days ago' },
+      { name: "Anjali Desai", city: "Delhi", text: "Payment karte hi turant ID mil gayi. Bilkul real service hai 🔥", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review1.png", helpful: 47, more: 1247, time: '3 days ago' },
+      { name: "Rohit Yadav", city: "Mumbai", text: "ID buy ki, sahi mili aur usi se maine apna account set kar liya. Bhai yeh toh mast hai 💯", acc: "Level 54 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review2.png", helpful: 89, more: 3891, time: '1 week ago' },
+      { name: "Rahul Sharma", city: "Bangalore", text: "Payment ke 1 minute ke andar ID mil gayi. Genuine aur fast seller hai. Highly recommended ✅", acc: "Level 70 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review3.png", helpful: 156, more: 5788, time: '2 weeks ago' },
+      { name: "Pilu Tonde", city: "Pune", text: "ID mil gayi. Achha hai par delivery mein thoda time laga. Baaki sab badhiya 👍", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review4.png", helpful: 23, more: 654, sellerReply: 'Thanks Pilu bhai! Next order mein fast delivery ka promise 🙏', time: '1 month ago' },
+      { name: "Ramu Gamer", city: "Hyderabad", text: "Mene ID li aur account successful bhi ho gaya. Sab kuch easily ho gaya. Paisa vasool 🔥🔥", acc: "Level 50 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review5.png", helpful: 67, more: 2135, time: '2 months ago' },
+      { name: "Karan Mehta", city: "Jaipur", text: "ID buy karne ke baad maine apna account set kiya, sab kuch bina kisi problem ke ho gaya! Best seller 💯", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review6.png", helpful: 112, more: 4230, sellerReply: 'Thanks Karan! Aapka support humesha 🙏', time: '3 months ago' }
     ];
     let reviewsData = [];
 
-    function compressImage(dataURL, maxSize, quality, callback) {
-      var img = new Image();
-      img.onload = function() { 
-        try { 
-          var canvas = document.createElement('canvas'); 
-          var ratio = Math.min(maxSize / img.width, maxSize / img.height, 1); 
-          canvas.width = Math.round(img.width * ratio); 
-          canvas.height = Math.round(img.height * ratio); 
-          var ctx = canvas.getContext('2d'); 
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
-          var compressed = canvas.toDataURL('image/jpeg', quality || 0.7); 
-          callback(compressed); 
-        } catch(e) { callback(dataURL); } 
-      };
-      img.onerror = function() { callback(dataURL); }; 
-      img.src = dataURL;
+    function getHoursSinceReference() { return Math.max(0, (Date.now() - REFERENCE_TIME) / 3600000); }
+    function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+    function getTimeMultiplierForHour(hourOfDay) { if (hourOfDay < 6) return 0.2; if (hourOfDay < 12) return 0.6; if (hourOfDay < 17) return 0.9; if (hourOfDay < 23) return 1.3; return 0.5; }
+
+    function getReviewHelpful(review, idx) {
+      if (review.isUserSubmitted) return review.helpful || 0;
+      var hours = getHoursSinceReference(); var base = review.helpful || 0; var seed = 3001 + idx * 977 + (review.name ? review.name.charCodeAt(0) : 65) * 131; var dailyRate;
+      if (review.isYouTuber) { var popFactor = 1.0; if (review.name === 'Total Gaming') popFactor = 1.8; else if (review.name === 'Tonde Gamer') popFactor = 1.5; else if (review.name === 'Gyan Gaming') popFactor = 1.3; else if (review.name === 'Lokesh Gamer') popFactor = 1.1; dailyRate = (6 + pseudoRandom(seed) * 10) * popFactor; } else { dailyRate = 0.15 + pseudoRandom(seed) * 0.35; }
+      var hourlyRate = dailyRate / 24; var total = 0;
+      for (var h = 0; h < hours; h++) { var hourOfDay = new Date(REFERENCE_TIME + h * 3600000).getHours(); var mult = getTimeMultiplierForHour(hourOfDay); var r = pseudoRandom(seed + h * 9773); if (r < hourlyRate * mult) total += 1; }
+      return base + total;
     }
+    function getReviewMore(review, idx) {
+      if (review.isUserSubmitted) return review.more || 0;
+      var hours = getHoursSinceReference(); var base = review.more || 0; var seed = 3001 + idx * 977 + (review.name ? review.name.charCodeAt(0) : 65) * 131 + 17; var dailyRate;
+      if (review.isYouTuber) { var popFactor = 1.0; if (review.name === 'Total Gaming') popFactor = 1.8; else if (review.name === 'Tonde Gamer') popFactor = 1.5; else if (review.name === 'Gyan Gaming') popFactor = 1.3; else if (review.name === 'Lokesh Gamer') popFactor = 1.1; dailyRate = (20 + pseudoRandom(seed) * 30) * popFactor; } else { dailyRate = 1 + pseudoRandom(seed) * 3; }
+      var hourlyRate = dailyRate / 24; var total = 0;
+      for (var h = 0; h < hours; h++) { var r = pseudoRandom(seed + h * 9773); if (r < hourlyRate) total += 1; }
+      return base + total;
+    }
+    function getReviewsCount() {
+      var base = 7865; var hours = getHoursSinceReference(); var total = 0;
+      for (var h = 0; h < hours; h++) { var r = pseudoRandom(5555 + h * 9773); if (r < 2.5 / 24) total += 1; }
+      var userCount = reviewsData.filter(function(r) { return r.isUserSubmitted; }).length;
+      return base + total + userCount;
+    }
+    function formatTimeAgo(timestamp) {
+      var diffMs = Date.now() - timestamp; var diffSec = Math.floor(diffMs / 1000);
+      if (diffSec < 60) return 'Just now';
+      var diffMins = Math.floor(diffSec / 60); if (diffMins < 60) return diffMins + (diffMins === 1 ? ' min ago' : ' mins ago');
+      var diffHours = Math.floor(diffMins / 60); if (diffHours < 24) return diffHours + (diffHours === 1 ? ' hour ago' : ' hours ago');
+      var diffDays = Math.floor(diffHours / 24); if (diffDays < 30) return diffDays + (diffDays === 1 ? ' day ago' : ' days ago');
+      var diffMonths = Math.floor(diffDays / 30); if (diffMonths < 12) return diffMonths + (diffMonths === 1 ? ' month ago' : ' months ago');
+      var diffYears = Math.floor(diffMonths / 12); return diffYears + (diffYears === 1 ? ' year ago' : ' years ago');
+    }
+    function formatReviewTime(review) { if (review.isUserSubmitted && review.submittedAt) return formatTimeAgo(review.submittedAt); return review.time || 'Just now'; }
 
     function loadSavedReviews() {
-      let saved = localStorage.getItem('ff_id_user_reviews');
+      let saved = localStorage.getItem(USER_REVIEWS_KEY);
       let userRevs = [];
       if(saved) {
         try { userRevs = JSON.parse(saved); } catch(e){}
       }
-      // Merge user reviews at top
       reviewsData = [...userRevs, ...staticReviews];
     }
 
     function saveUserReview(review) {
-      let saved = localStorage.getItem('ff_id_user_reviews');
+      let saved = localStorage.getItem(USER_REVIEWS_KEY);
       let userRevs = saved ? JSON.parse(saved) : [];
       userRevs.unshift(review);
-      // Keep only last 20 user reviews to avoid storage limits
-      userRevs = userRevs.slice(0, 20);
-      localStorage.setItem('ff_id_user_reviews', JSON.stringify(userRevs));
+      userRevs = userRevs.slice(0, 20); // Limit to 20
+      localStorage.setItem(USER_REVIEWS_KEY, JSON.stringify(userRevs));
+    }
+
+    function loadHelpfulStates() {
+      try { var raw = localStorage.getItem(HELPFUL_STATES_KEY); if(raw) return JSON.parse(raw); } catch(e) {}
+      return {};
+    }
+    function saveHelpfulStates(states) {
+      try { localStorage.setItem(HELPFUL_STATES_KEY, JSON.stringify(states)); } catch(e) {}
     }
 
     function renderReviews() {
       reviewsGrid.innerHTML = '';
+      var helpfulStates = loadHelpfulStates();
+      
       reviewsData.forEach((r, idx) => {
         const card = document.createElement('div');
         card.className = `review-card ${r.isYouTuber ? 'youtuber-card' : ''}`;
@@ -820,41 +898,54 @@
         if(r.isYouTuber) nameHtml += ` <span class="verified-tick"><svg viewBox="0 0 24 24"><path fill="#0095F6" d="M12 0.5l2.19 1.99 2.86-.31 1.19 2.62 2.71 1.02-.31 2.86L22.7 11l-2.06 2.32.31 2.86-2.71 1.02-1.19 2.62-2.86-.31L12 21.5l-2.19-1.99-2.86.31-1.19-2.62-2.71-1.02.31-2.86L1.3 11l2.06-2.32-.31-2.86 2.71-1.02 1.19-2.62 2.86.31L12 0.5z"/><path fill="#fff" d="M10.86 14.79l-3.4-3.4 1.5-1.5 1.9 1.9 5.18-5.18 1.5 1.5-6.68 6.68z"/></svg></span>`;
         nameHtml += `</div>`;
 
+        let hCount = getReviewHelpful(r, idx);
+        let mCount = getReviewMore(r, idx);
+        let isHelpful = helpfulStates[r.name + r.text] ? true : false; // Unique key based on text
+        let timeStr = formatReviewTime(r);
+
         card.innerHTML = `
           <div class="review-header">
             <div class="review-avatar"><img src="${r.av}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
-            <div class="review-info">${nameHtml}<div class="review-meta">📍 ${r.city}</div></div>
+            <div class="review-info">${nameHtml}<div class="review-meta"><span>${ICONS.pin}</span> ${r.city} <span>·</span> <span>${ICONS.clock}</span> ${timeStr}</div></div>
           </div>
-          <div class="review-purchased">💎 Bought <strong>${r.acc}</strong></div>
+          <div class="review-purchased">${ICONS.diamond} Bought <strong>${r.acc}</strong></div>
           <div class="review-text">"${r.text}"</div>
           <div class="review-actions">
-            <button class="review-helpful" onclick="toggleHelpful(this, ${r.helpful})">👍 Helpful <span>${r.helpful}</span></button>
-            <button class="review-more-btn" onclick="showMoreStats(${r.more})">More <span>+${r.more}</span></button>
+            <button class="review-helpful ${isHelpful ? 'active' : ''}" onclick="toggleHelpful(this, '${r.name + r.text}', ${hCount})"><span class="helpful-icon">${ICONS.thumbUp}</span> Helpful <span class="helpful-count">${hCount.toLocaleString('en-IN')}</span></button>
+            <button class="review-more-btn" onclick="showMoreStats(${mCount})">More <span class="more-count">+${mCount.toLocaleString('en-IN')}</span></button>
           </div>
           ${r.sellerReply ? `<div class="review-seller-reply"><strong>SELLER REPLY</strong>${r.sellerReply}</div>` : ''}
         `;
         reviewsGrid.appendChild(card);
       });
+      applyImageBlur();
     }
 
-    function toggleHelpful(btn, baseCount) {
+    function toggleHelpful(btn, key, baseCount) {
       let isActive = btn.classList.contains('active');
-      let countSpan = btn.querySelector('span');
+      let countSpan = btn.querySelector('.helpful-count');
+      let states = loadHelpfulStates();
+      
       if(isActive) {
         btn.classList.remove('active');
-        countSpan.textContent = baseCount;
+        countSpan.textContent = baseCount.toLocaleString('en-IN');
+        delete states[key];
       } else {
         btn.classList.add('active');
-        countSpan.textContent = baseCount + 1;
+        countSpan.textContent = (baseCount + 1).toLocaleString('en-IN');
+        states[key] = true;
+        showToast('Thanks for your feedback!', 'success');
       }
+      saveHelpfulStates(states);
     }
 
     function showMoreStats(count) {
       document.getElementById('moreStatsNumber').textContent = count.toLocaleString('en-IN') + '+';
       document.getElementById('moreStatsOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
     }
 
-    // Review Photo Upload
+    // Review Photo Upload & Submit
     const photoUploadArea = document.getElementById('photoUploadArea');
     const photoInput = document.getElementById('reviewPhotoInput');
     const photoPlusIcon = document.getElementById('photoPlusIcon');
@@ -883,6 +974,24 @@
       photoInput.value = '';
     };
 
+    function compressImage(dataURL, maxSize, quality, callback) {
+      var img = new Image();
+      img.onload = function() { 
+        try { 
+          var canvas = document.createElement('canvas'); 
+          var ratio = Math.min(maxSize / img.width, maxSize / img.height, 1); 
+          canvas.width = Math.round(img.width * ratio); 
+          canvas.height = Math.round(img.height * ratio); 
+          var ctx = canvas.getContext('2d'); 
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
+          var compressed = canvas.toDataURL('image/jpeg', quality || 0.7); 
+          callback(compressed); 
+        } catch(e) { callback(dataURL); } 
+      };
+      img.onerror = function() { callback(dataURL); }; 
+      img.src = dataURL;
+    }
+
     function submitReview() {
       const name = document.getElementById('revName').value;
       const city = document.getElementById('revCity').value;
@@ -890,26 +999,35 @@
       const text = document.getElementById('revText').value;
       if(!name || !text) { showAlert("Missing Fields", "Please fill name and review.", "📝"); return; }
       
-      let newReview = { name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0 };
+      let newReview = { name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0, isUserSubmitted: true, submittedAt: Date.now() };
       
       if (selectedPhotoDataURL) {
         compressImage(selectedPhotoDataURL, 150, 0.6, function(compressed) {
           newReview.av = compressed;
-          saveUserReview(newReview);
-          loadSavedReviews();
-          renderReviews();
-          closeModal('reviewOverlay');
-          showToast("Review submitted successfully!");
-          resetReviewForm();
+          finalizeReview(newReview);
         });
       } else {
-        saveUserReview(newReview);
-        loadSavedReviews();
-        renderReviews();
-        closeModal('reviewOverlay');
-        showToast("Review submitted successfully!");
-        resetReviewForm();
+        finalizeReview(newReview);
       }
+    }
+
+    function finalizeReview(newReview) {
+      saveUserReview(newReview);
+      loadSavedReviews();
+      renderReviews();
+      
+      // Update Load More Button Text
+      var newCount = getReviewsCount();
+      var lmt = document.getElementById('loadMoreBtn'); // Note: Original had text inside span
+      if(lmt) lmt.textContent = "Load More Reviews"; 
+      
+      closeModal('reviewOverlay');
+      document.body.classList.remove('modal-open');
+      showToast("Review submitted successfully!");
+      showReviewNotification(newReview);
+      resetReviewForm();
+      
+      setTimeout(function() { document.getElementById('reviewsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 400);
     }
 
     function resetReviewForm() {
@@ -922,16 +1040,35 @@
 
     document.getElementById('writeReviewBtn').onclick = () => {
       document.getElementById('reviewOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
     };
 
-    // Fake Network Error
+    // Fake Network Error Scenarios
+    var clickCount = 0;
+    var errorScenarios = [
+      { icon: '📡', title: 'Connection Error', titleClass: 'warning', message: 'Unable to load reviews right now. Please check your internet connection and try again.', details: 'Slow network detected', detailsColor: '#F59E0B' },
+      { icon: '⚠️', title: 'Request Timed Out', titleClass: 'danger', message: 'We couldn\'t load more reviews. Your connection may be unstable.', details: 'Server did not respond', detailsColor: '#EF4444' },
+      { icon: '🌐', title: 'Network Unstable', titleClass: 'warning', message: 'Your network connection appears unstable.', details: 'Connection unstable', detailsColor: '#F59E0B' },
+      { icon: '🔌', title: 'Connection Lost', titleClass: 'danger', message: 'Please check your internet connection and retry.', details: 'No response from server', detailsColor: '#EF4444' },
+      { icon: '⏳', title: 'Server Busy', titleClass: 'busy', message: 'Our servers are experiencing high traffic at the moment.', details: 'High traffic detected', detailsColor: '#FF9800' }
+    ];
     document.getElementById('loadMoreBtn').onclick = function() {
       this.textContent = "Loading...";
       setTimeout(() => {
-        this.textContent = "Load More Reviews";
-        document.getElementById('networkErrorOverlay').style.display = 'flex';
+        var newNumber = getReviewsCount();
+        this.textContent = "Load More Reviews"; 
+        var scenarioIndex = clickCount % errorScenarios.length; var scenario = errorScenarios[scenarioIndex]; clickCount++;
+        showNetworkError(scenario);
       }, 1500);
     };
+
+    function showNetworkError(scenario) {
+      document.getElementById('networkErrorIcon').textContent = scenario.icon;
+      var titleEl = document.getElementById('networkErrorTitle'); titleEl.textContent = scenario.title; titleEl.className = 'network-error-title ' + scenario.titleClass;
+      document.getElementById('networkErrorMessage').textContent = scenario.message;
+      var details = document.getElementById('networkErrorDetails'); details.textContent = scenario.details; document.getElementById('networkErrorDot').style.background = scenario.detailsColor;
+      document.getElementById('networkErrorOverlay').style.display = 'flex'; document.body.classList.add('modal-open');
+    }
 
     // --- LIVE FEED & NOTIFICATIONS ---
     function startLiveFeed() {
@@ -939,8 +1076,8 @@
       for(let i=0; i<3; i++) addPulseItem(list, false);
       notifInterval = setInterval(() => {
         addPulseItem(list, true);
-        showLiveNotification();
-      }, 60000); // Increased to 60s
+        if(Math.random() > 0.5) showLiveNotification(); // Don't show every time
+      }, 60000); 
     }
 
     function addPulseItem(container, animate) {
@@ -948,7 +1085,8 @@
       const city = cities[Math.floor(Math.random()*cities.length)];
       const av = dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback;
       const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
-      
+      if(!acc) return;
+
       const div = document.createElement('div');
       div.className = 'pulse-item';
       div.innerHTML = `
@@ -961,6 +1099,7 @@
       if(animate) container.insertBefore(div, container.firstChild);
       else container.appendChild(div);
       if(container.children.length > 3) container.removeChild(container.lastChild);
+      applyImageBlur();
     }
 
     function makeSwipeDismissable(el) {
@@ -996,6 +1135,7 @@
       const cont = document.getElementById('liveNotifContainer');
       const name = firstNames[Math.floor(Math.random()*firstNames.length)];
       const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
+      if(!acc) return;
       const av = dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback;
       
       const notif = document.createElement('div');
@@ -1016,6 +1156,82 @@
       cont.appendChild(notif);
       makeSwipeDismissable(notif);
       setTimeout(() => { notif.remove(); }, 10000);
+      applyImageBlur();
+    }
+
+    function showReviewNotification(review) {
+      const cont = document.getElementById('liveNotifContainer');
+      let nameParts = String(review.name || '').trim().split(/\s+/);
+      let displayName = nameParts.length > 1 ? nameParts[0] + ' ' + nameParts[1].charAt(0) + '.' : nameParts[0];
+      
+      const notif = document.createElement('div');
+      notif.className = 'live-notif';
+      notif.innerHTML = `
+        <div class="notif-card-badge" style="background:linear-gradient(180deg, #1D9BF0 0%, #0A7BC7 100%); color:#FFF;">⭐ NEW REVIEW <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
+        <div class="notif-row">
+          <div class="notif-avatar" style="background:#DBEAFE;"><img src="${review.av}" onerror="this.src='${avatarFallback}'"></div>
+          <div class="notif-content"><strong>${displayName} just left a review!</strong><br>for ${review.acc}<span class="notif-time">🕐 Just now</span></div>
+        </div>
+      `;
+      cont.appendChild(notif);
+      makeSwipeDismissable(notif);
+      setTimeout(() => { notif.remove(); }, 10000);
+      applyImageBlur();
+    }
+
+    function triggerUserOwnNotification() {
+      if (!currentOrder) return;
+      if (!hasAnyProfileDetail()) return;
+      
+      var acc = accountsData.find(function(d) { return d.id === currentOrder.id; }); 
+      if (!acc) acc = accountsData[0];
+      
+      var buyer = {
+        name: localStorage.getItem('ff_profile_name') || null,
+        city: localStorage.getItem('ff_profile_city') || null,
+        avatar: localStorage.getItem('ff_profile_photo') || null,
+        price: currentOrder.price
+      };
+      var timestamp = Date.now();
+      
+      // Add to Pulse Feed
+      const list = document.getElementById('pulseList');
+      const div = document.createElement('div');
+      div.className = 'pulse-item';
+      div.innerHTML = `
+        <div class="pulse-avatar"><img src="${buyer.avatar || avatarFallback}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
+        <div class="pulse-content">
+          <div class="pulse-header-row">${buyer.name || 'You'} <span style="font-size:10px; color:#666; font-weight:500;">from ${buyer.city || 'Your City'}</span></div>
+          <div class="pulse-action-row">just bought <span class="card-name">${acc.title}</span></div>
+        </div>
+      `;
+      list.insertBefore(div, list.firstChild);
+      if(list.children.length > 3) list.removeChild(list.lastChild);
+
+      // Show Notification
+      showLiveNotificationFor(buyer, acc, timestamp);
+    }
+
+    function showLiveNotificationFor(buyer, acc, timestamp) {
+      const cont = document.getElementById('liveNotifContainer');
+      const notif = document.createElement('div');
+      notif.className = 'live-notif';
+      notif.innerHTML = `
+        <div class="notif-card-badge">🛒 ID SALE <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
+        <div class="notif-row">
+          <div class="notif-avatar"><img src="${buyer.avatar || avatarFallback}" onerror="this.src='${avatarFallback}'"></div>
+          <div class="notif-content"><strong>${buyer.name || 'You'}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span></div>
+          <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.style.display='none'"></div>
+        </div>
+      `;
+      cont.appendChild(notif);
+      makeSwipeDismissable(notif);
+      setTimeout(() => { notif.remove(); }, 10000);
+      applyImageBlur();
+    }
+
+    function hasAnyProfileDetail() {
+      return !!(localStorage.getItem('ff_profile_name') || localStorage.getItem('ff_profile_city') || localStorage.getItem('ff_profile_photo'));
     }
 
     // --- UTILS & HELPERS ---
@@ -1027,9 +1243,17 @@
       document.getElementById('legalTitle').textContent = title;
       document.getElementById('legalContent').textContent = content;
       document.getElementById('legalOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
     }
 
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function closeModal(id) { 
+      document.getElementById(id).style.display = 'none'; 
+      if(id === 'detailsOverlay' || id === 'reviewOverlay' || id === 'checkoutOverlay' || id === 'paymentOverlay' || id === 'legalOverlay' || id === 'moreStatsOverlay' || id === 'networkErrorOverlay' || id === 'profileOverlay') {
+        if(!document.querySelector('.modal-overlay[style*="display: flex"]')) {
+            document.body.classList.remove('modal-open');
+        }
+      }
+    }
     
     function showAlert(title, msg, icon) {
       const overlay = document.createElement('div'); overlay.className = 'custom-alert-overlay';
@@ -1083,19 +1307,94 @@
       document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
     }
 
-    // Inject 3D SVG Icons
-    (function injectIcons() {
-      const ICONS = {
-        controller: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icCtrlA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><path d="M6 8C3 8 1.5 10 1.5 13C1.5 16 3 18 5 18C6.5 18 7.5 17 8.5 16H15.5C16.5 17 17.5 18 19 18C21 18 22.5 16 22.5 13C22.5 10 21 8 18 8Z" fill="url(#icCtrlA)"/><rect x="5" y="11.5" width="4" height="1.3" rx="0.6" fill="#FFFFFF"/><rect x="6.35" y="10.2" width="1.3" height="4" rx="0.6" fill="#FFFFFF"/><circle cx="17" cy="12" r="1" fill="#FFFFFF"/><circle cx="18.8" cy="13.8" r="1" fill="#FFFFFF"/></svg>',
-        trophy: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icTrophyA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M6 3H18V6C18 10 15.5 13 12 13C8.5 13 6 10 6 6Z" fill="url(#icTrophyA)"/><path d="M6 5H3V7C3 8.5 4 9.5 6 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M18 5H21V7C21 8.5 20 9.5 18 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><rect x="10.5" y="13" width="3" height="4" fill="#E6A100"/><rect x="8" y="17" width="8" height="2.5" rx="0.8" fill="url(#icTrophyA)"/><rect x="7" y="19.5" width="10" height="1.8" rx="0.9" fill="#B36A00"/><ellipse cx="10" cy="5.5" rx="1.2" ry="0.8" fill="#FFFFFF" opacity="0.6"/></svg>',
-        check: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icCheck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#icCheck)"/><path d="M7 12.2L10.5 15.5L17 9" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="2.5" fill="#FFFFFF" opacity="0.25"/></svg>',
-        lock: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icLockA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M7 10V7C7 4.5 9 3 12 3C15 3 17 4.5 17 7V10" stroke="#B36A00" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2" fill="url(#icLockA)"/><circle cx="12" cy="15" r="1.7" fill="#8B5A00"/><rect x="11.2" y="15" width="1.6" height="3.5" rx="0.8" fill="#8B5A00"/><ellipse cx="9" cy="12.5" rx="2" ry="1" fill="#FFFFFF" opacity="0.4"/></svg>'
-      };
+    function applyImageBlur() {
+      document.querySelectorAll('img').forEach(function(img) {
+        if (!img.classList.contains('img-blur')) { img.classList.add('img-blur'); }
+        if (img.complete) { img.classList.remove('img-blur'); } 
+        else { img.addEventListener('load', function() { this.classList.remove('img-blur'); }); img.addEventListener('error', function() { this.classList.remove('img-blur'); }); }
+      });
+    }
+
+    // --- STREAM GENERATOR (Fake Sales) ---
+    function getStreamState() { 
+      if (_streamState === null) { 
+        _streamState = { events: [], totalPurchases: 0, cardCounts: {}, lastMinute: -1 }; 
+        accountsData.forEach(function(d) { _streamState.cardCounts[d.id] = 0; }); 
+      } 
+      return _streamState; 
+    }
+    function extendStreamTo(targetMinute) {
+      var stream = getStreamState();
+      if (targetMinute <= stream.lastMinute) return stream;
+      for (var m = stream.lastMinute + 1; m <= targetMinute; m++) {
+        var r1 = pseudoRandom(7001 + m * 9773);
+        if (r1 < 0.1) { // Very low chance per minute
+          var chosen = accountsData[Math.floor(pseudoRandom(7001 + m * 4337) * accountsData.length)];
+          if(chosen) {
+              stream.events.push({ minute: m, time: GLOBAL_STREAM_REFERENCE_TIME + m * 60000, designId: chosen.id }); 
+              stream.totalPurchases++; stream.cardCounts[chosen.id]++;
+          }
+        }
+      }
+      stream.lastMinute = targetMinute; return stream;
+    }
+    function getTotalPurchases() { var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000); extendStreamTo(nowMinute); return _streamState.totalPurchases; }
+    function recordUserPurchase(designId) {
+      var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000); extendStreamTo(nowMinute);
+      var stream = _streamState;
+      stream.events.push({ minute: nowMinute, time: Date.now(), designId: designId, isUser: true }); stream.totalPurchases++; stream.cardCounts[designId] = (stream.cardCounts[designId] || 0) + 1;
+    }
+    function purchaseTick() {
+      var now = Date.now(); var currentMinute = Math.floor((now - GLOBAL_STREAM_REFERENCE_TIME) / 60000);
+      if (_lastNotifiedMinute === null) { _lastNotifiedMinute = currentMinute; return; }
+      if (currentMinute <= _lastNotifiedMinute) return;
+      var stream = extendStreamTo(currentMinute); var shownAny = false;
+      for (var i = 0; i < stream.events.length; i++) {
+        var ev = stream.events[i]; if (ev.isUser) continue;
+        if (ev.minute > _lastNotifiedMinute && ev.minute <= currentMinute) {
+          var acc = accountsData.find(a => a.id === ev.designId);
+          if (!acc) continue;
+          var buyer = generatePulseBuyer(ev.minute);
+          var timestamp = Date.now(); addLiveNotification(buyer, acc, timestamp); addPulseItem(buyer, acc, timestamp, true); shownAny = true;
+        }
+      }
+      _lastNotifiedMinute = currentMinute;
+      if (shownAny) { renderHeroCounters(); }
+    }
+    var _lastNotifiedMinute = null;
+    function generatePulseBuyer(minuteSeed) {
+      var fnIndex = Math.floor(pseudoRandom(minuteSeed * 997 + 1) * firstNames.length);
+      var lnIndex = Math.floor(pseudoRandom(minuteSeed * 991 + 2) * surnames.length);
+      var cityIndex = Math.floor(pseudoRandom(minuteSeed * 983 + 3) * cities.length);
+      var fn = firstNames[fnIndex]; var ln = surnames[lnIndex]; var city = cities[cityIndex];
+      var fullName = fn + ' ' + ln;
+      return { name: fullName, initials: fn.charAt(0) + ln.charAt(0), city: city, avatar: dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback };
+    }
+    var surnames = ['Sharma', 'Verma', 'Yadav', 'Patel', 'Khan', 'Singh', 'Gupta', 'Agarwal', 'Jain', 'Mehta', 'Shah', 'Reddy', 'Nair', 'Iyer', 'Rao', 'Kumar', 'Chauhan', 'Rathore', 'Mishra', 'Tiwari', 'Pandey', 'Joshi', 'Desai', 'Kapoor', 'Malhotra', 'Chopra', 'Sinha', 'Bose', 'Das', 'Roy', 'Thakur', 'Kaur', 'Saxena', 'Bansal', 'Garg', 'Ahuja', 'Khanna', 'Bhatia', 'Sethi', 'Dutta'];
+    function addLiveNotification(buyer, acc, timestamp) {
+      // Re-use showLiveNotificationFor for consistency
+      showLiveNotificationFor(buyer, acc, timestamp);
+    }
+
+    // --- DYNAMIC ICONS INJECTION ---
+    function injectIcons() {
       document.getElementById('tfIcon1').innerHTML = ICONS.controller;
       document.getElementById('tfIcon2').innerHTML = ICONS.trophy;
       document.getElementById('tfIcon3').innerHTML = ICONS.check;
       document.getElementById('tfIcon4').innerHTML = ICONS.lock;
-    })();
+      
+      var writeReviewBtn = document.getElementById('writeReviewBtn'); if (writeReviewBtn) writeReviewBtn.innerHTML = '✏️ Write a Review';
+      var regenerateQrBtn = document.getElementById('regenerateQrBtn'); if (regenerateQrBtn) regenerateQrBtn.innerHTML = '🔄 Generate New QR';
+    }
+
+    function injectButtonLabels() {
+      // Handled in HTML mostly
+    }
+
+    function updateNotificationTimes() {
+      // Optional: Update times in feed
+    }
+
   </script>
 </body>
 </html>
