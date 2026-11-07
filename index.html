@@ -182,6 +182,7 @@
     .action-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #076B00; }
     .action-btn:disabled { background: #CCC; box-shadow: 0 6px 0 #999; cursor: not-allowed; }
     
+    /* Payment Box Fix */
     .payment-amount-box { 
       background: linear-gradient(135deg, #FFFDF5 0%, #FFF6E0 100%);
       padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 15px; 
@@ -423,17 +424,42 @@
     </div>
   </div>
 
+  <!-- PROFILE MODAL -->
   <div class="modal-overlay" id="profileOverlay">
     <div class="modal" style="max-width: 400px;">
       <button class="modal-close" onclick="closeModal('profileOverlay')">&times;</button>
       <div class="modal-body">
-        <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 15px; text-align:center;">Your Profile</h2>
-        <p style="font-size: 12px; text-align:center; margin-bottom:15px; color:#666;">Save your WhatsApp number for faster checkout.</p>
-        <div class="field-group">
-          <label>WhatsApp Number</label>
-          <input type="tel" id="profilePhone" placeholder="9876543210" maxlength="10">
+        <div id="profileSavedView" style="display:none; text-align:center;">
+          <div style="background:#FFF; border-radius:20px; padding:20px; border:2px solid #FDEEC8; box-shadow:0 4px 0 #E0A000;">
+            <div style="display:inline-block; background:var(--green-grad); color:#1A1A1A; font-size:10px; font-weight:900; padding:5px 12px; border-radius:100px; margin-bottom:10px;">✅ Profile Saved</div>
+            <div id="profileSavedAvatar" style="width:80px; height:80px; border-radius:50%; background:var(--deep-yellow-grad); margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:36px; overflow:hidden; border:3px solid #FFF; box-shadow:0 4px 8px rgba(0,0,0,0.1);">🎮</div>
+            <div id="profileSavedName" style="font-size:18px; font-weight:800; color:#1A1A1A; margin-bottom:10px;">—</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div id="profileSavedCityRow" style="background:#FFF8E7; padding:10px; border-radius:10px; font-size:13px; font-weight:700;"><span>📍</span> <span id="profileSavedCity">—</span></div>
+              <div id="profileSavedUidRow" style="background:#FFF8E7; padding:10px; border-radius:10px; font-size:13px; font-weight:700;"><span>📱</span> <span id="profileSavedUid">—</span></div>
+            </div>
+            <button type="button" class="action-btn" id="profileEditBtn" style="margin-top:15px; padding:12px; font-size:14px; background:var(--deep-yellow-grad); box-shadow:0 4px 0 #C77A00;">✏️ Edit Profile</button>
+          </div>
         </div>
-        <button class="action-btn" onclick="saveProfile()" style="background: var(--deep-yellow-grad); box-shadow: 0 6px 0 #C77A00;">Save Profile</button>
+        <div id="profileFormView">
+          <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 15px; text-align:center;">Your Profile</h2>
+          <p style="font-size: 12px; text-align:center; margin-bottom:15px; color:#666;">Optional — save details for faster checkout.</p>
+          <div class="field-group">
+            <label>Profile Photo (Optional)</label>
+            <div class="photo-upload-row" style="display:flex; align-items:center; gap:10px;">
+              <div class="photo-upload-area" id="profilePhotoArea" style="width:60px; height:60px; border-radius:50%; border:2px dashed #FFC107; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; overflow:hidden;">
+                <span class="plus-icon" id="profilePhotoPlusIcon" style="font-size:24px; color:#FF9800;">+</span>
+                <button type="button" class="photo-remove-btn" id="profilePhotoRemoveBtn" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:12px; cursor:pointer; display:none;">×</button>
+              </div>
+              <span style="font-size:11px; color:#666;">Tap to upload photo 📷</span>
+            </div>
+            <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;" />
+          </div>
+          <div class="field-group"><label>In-Game Name</label><input type="text" id="profileName" placeholder="e.g. ProGamer99" maxlength="20"></div>
+          <div class="field-group"><label>Your City</label><input type="text" id="profileCity" placeholder="e.g. Mumbai" maxlength="20"></div>
+          <div class="field-group"><label>WhatsApp Number</label><input type="tel" id="profilePhone" placeholder="9876543210" maxlength="10"></div>
+          <button class="action-btn" onclick="saveProfile()" style="background: var(--deep-yellow-grad); box-shadow: 0 6px 0 #C77A00;">Save Profile</button>
+        </div>
       </div>
     </div>
   </div>
@@ -488,6 +514,19 @@
       userWhite: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="#FFFFFF"/><path d="M4 20C4 16 8 14 12 14C16 14 20 16 20 20V21H4V20Z" fill="#FFFFFF"/><circle cx="12" cy="8" r="4" fill="#FFFFFF" opacity="0.3"/><ellipse cx="10" cy="6" rx="1.5" ry="1" fill="#FFFFFF" opacity="0.5"/></svg>'
     };
 
+    // --- OVERRIDE ALERTS ---
+    (function() {
+      function createOverlay() { var o = document.createElement('div'); o.className = 'custom-alert-overlay'; document.body.appendChild(o); return o; }
+      window.alert = function(message, options) {
+        options = options || {}; var title = options.title || 'Message'; var icon = options.icon || '✨';
+        var overlay = createOverlay(); var box = document.createElement('div'); box.className = 'custom-alert-box';
+        box.innerHTML = '<div class="custom-alert-icon">' + icon + '</div><div class="custom-alert-title">' + title + '</div><div class="custom-alert-message">' + message + '</div><button class="custom-alert-btn" id="caOk">OK</button>';
+        overlay.appendChild(box);
+        document.getElementById('caOk').addEventListener('click', function() { overlay.remove(); });
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+      };
+    })();
+
     // --- CORE VARIABLES ---
     const fallbackData = [
       { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", images: ["1.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
@@ -501,10 +540,8 @@
     let selectedPhotoDataURL = null;
     let notifInterval = null;
 
-    let _streamState = null;
     var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
     var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
-    var BASE_PURCHASES_PER_HOUR = 10; // Slower fake sales for IDs
 
     // --- INITIALIZATION ---
     window.onload = async () => {
@@ -518,12 +555,10 @@
       initViewerCounts();
       fetchDynamicAvatars();
       injectIcons();
-      injectButtonLabels();
-      initCountdowns();
-      updateCountdowns();
+      
       setInterval(updateCountdowns, 1000);
       setInterval(fluctuateViewers, 5000);
-      setInterval(purchaseTick, 10000); // Check for new fake purchases
+      setInterval(purchaseTick, 10000); 
       setInterval(updateNotificationTimes, 30000);
     };
 
@@ -553,7 +588,7 @@
       }
       filteredData = [...accountsData];
       renderGrid();
-      initViewerCounts(); // Init viewers after loading IDs
+      initViewerCounts();
     }
 
     function renderGrid() {
@@ -715,24 +750,97 @@
 
     // --- PROFILE LOGIC ---
     function loadProfile() {
-      const saved = localStorage.getItem('ff_profile_phone');
-      if(saved) document.getElementById('profileBtn').classList.add('saved');
+      const savedPhone = localStorage.getItem('ff_profile_phone');
+      if(savedPhone) document.getElementById('profileBtn').classList.add('saved');
+      updateProfileUI();
     }
-    document.getElementById('profileBtn').onclick = () => {
-      document.getElementById('profilePhone').value = localStorage.getItem('ff_profile_phone') || '';
-      document.getElementById('profileOverlay').style.display = 'flex';
-    }
-    function saveProfile() {
-      const phone = document.getElementById('profilePhone').value.trim();
-      if(phone.length === 10) {
-        localStorage.setItem('ff_profile_phone', phone);
-        document.getElementById('profileBtn').classList.add('saved');
-        closeModal('profileOverlay');
-        showToast("Profile saved successfully!");
+    
+    function updateProfileUI() {
+      const name = localStorage.getItem('ff_profile_name');
+      const city = localStorage.getItem('ff_profile_city');
+      const phone = localStorage.getItem('ff_profile_phone');
+      const photo = localStorage.getItem('ff_profile_photo');
+      
+      if (name || city || phone || photo) {
+        document.getElementById('profileSavedView').style.display = 'block';
+        document.getElementById('profileFormView').style.display = 'none';
+        
+        document.getElementById('profileSavedName').textContent = name || 'Gamer';
+        document.getElementById('profileSavedCity').textContent = city || 'Not set';
+        document.getElementById('profileSavedUid').textContent = phone || 'Not set';
+        
+        if(photo) {
+            document.getElementById('profileSavedAvatar').innerHTML = `<img src="${photo}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            document.getElementById('profileSavedAvatar').innerHTML = '🎮';
+        }
       } else {
-        showAlert("Invalid Number", "Please enter a 10-digit number.", "⚠️");
+        document.getElementById('profileSavedView').style.display = 'none';
+        document.getElementById('profileFormView').style.display = 'block';
       }
     }
+
+    document.getElementById('profileBtn').onclick = () => {
+      document.getElementById('profileName').value = localStorage.getItem('ff_profile_name') || '';
+      document.getElementById('profileCity').value = localStorage.getItem('ff_profile_city') || '';
+      document.getElementById('profilePhone').value = localStorage.getItem('ff_profile_phone') || '';
+      document.getElementById('profileOverlay').style.display = 'flex';
+      document.body.classList.add('modal-open');
+      updateProfileUI();
+    }
+    
+    document.getElementById('profileEditBtn').onclick = () => {
+      document.getElementById('profileSavedView').style.display = 'none';
+      document.getElementById('profileFormView').style.display = 'block';
+    }
+
+    function saveProfile() {
+      const name = document.getElementById('profileName').value.trim();
+      const city = document.getElementById('profileCity').value.trim();
+      const phone = document.getElementById('profilePhone').value.trim();
+      
+      if(phone && phone.length !== 10) { showAlert("Invalid Number", "Please enter a 10-digit number.", "⚠️"); return; }
+      
+      localStorage.setItem('ff_profile_name', name);
+      localStorage.setItem('ff_profile_city', city);
+      if(phone) localStorage.setItem('ff_profile_phone', phone);
+      
+      document.getElementById('profileBtn').classList.add('saved');
+      closeModal('profileOverlay');
+      showToast("Profile saved successfully!");
+      updateProfileUI();
+    }
+
+    // Profile Photo Upload
+    const profilePhotoArea = document.getElementById('profilePhotoArea');
+    const profilePhotoInput = document.getElementById('profilePhotoInput');
+    const profilePhotoPlusIcon = document.getElementById('profilePhotoPlusIcon');
+    const profilePhotoRemoveBtn = document.getElementById('profilePhotoRemoveBtn');
+
+    profilePhotoArea.onclick = () => profilePhotoInput.click();
+    profilePhotoInput.onchange = (e) => {
+      let file = e.target.files[0]; if(!file) return;
+      let reader = new FileReader();
+      reader.onload = (ev) => {
+        compressImage(ev.target.result, 150, 0.6, function(compressed) {
+          localStorage.setItem('ff_profile_photo', compressed);
+          profilePhotoArea.style.backgroundImage = `url(${compressed})`;
+          profilePhotoArea.style.backgroundSize = 'cover';
+          profilePhotoArea.style.backgroundPosition = 'center';
+          profilePhotoPlusIcon.style.display = 'none';
+          profilePhotoRemoveBtn.style.display = 'flex';
+        });
+      };
+      reader.readAsDataURL(file);
+    };
+    profilePhotoRemoveBtn.onclick = (e) => {
+      e.stopPropagation();
+      localStorage.removeItem('ff_profile_photo');
+      profilePhotoArea.style.backgroundImage = 'none';
+      profilePhotoPlusIcon.style.display = 'block';
+      profilePhotoRemoveBtn.style.display = 'none';
+      profilePhotoInput.value = '';
+    };
 
     // --- MUSIC ---
     const bgMusic = document.getElementById('bgMusic');
@@ -804,7 +912,7 @@
       });
     }
 
-    // --- REVIEWS LOGIC (With LocalStorage & Time-based counts) ---
+    // --- REVIEWS LOGIC ---
     const reviewsGrid = document.getElementById('reviewsGrid');
     const USER_REVIEWS_KEY = 'ff_id_user_reviews';
     const HELPFUL_STATES_KEY = 'ff_id_helpful_states';
@@ -823,43 +931,6 @@
       { name: "Karan Mehta", city: "Jaipur", text: "ID buy karne ke baad maine apna account set kiya, sab kuch bina kisi problem ke ho gaya! Best seller 💯", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review6.png", helpful: 112, more: 4230, sellerReply: 'Thanks Karan! Aapka support humesha 🙏', time: '3 months ago' }
     ];
     let reviewsData = [];
-
-    function getHoursSinceReference() { return Math.max(0, (Date.now() - REFERENCE_TIME) / 3600000); }
-    function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
-    function getTimeMultiplierForHour(hourOfDay) { if (hourOfDay < 6) return 0.2; if (hourOfDay < 12) return 0.6; if (hourOfDay < 17) return 0.9; if (hourOfDay < 23) return 1.3; return 0.5; }
-
-    function getReviewHelpful(review, idx) {
-      if (review.isUserSubmitted) return review.helpful || 0;
-      var hours = getHoursSinceReference(); var base = review.helpful || 0; var seed = 3001 + idx * 977 + (review.name ? review.name.charCodeAt(0) : 65) * 131; var dailyRate;
-      if (review.isYouTuber) { var popFactor = 1.0; if (review.name === 'Total Gaming') popFactor = 1.8; else if (review.name === 'Tonde Gamer') popFactor = 1.5; else if (review.name === 'Gyan Gaming') popFactor = 1.3; else if (review.name === 'Lokesh Gamer') popFactor = 1.1; dailyRate = (6 + pseudoRandom(seed) * 10) * popFactor; } else { dailyRate = 0.15 + pseudoRandom(seed) * 0.35; }
-      var hourlyRate = dailyRate / 24; var total = 0;
-      for (var h = 0; h < hours; h++) { var hourOfDay = new Date(REFERENCE_TIME + h * 3600000).getHours(); var mult = getTimeMultiplierForHour(hourOfDay); var r = pseudoRandom(seed + h * 9773); if (r < hourlyRate * mult) total += 1; }
-      return base + total;
-    }
-    function getReviewMore(review, idx) {
-      if (review.isUserSubmitted) return review.more || 0;
-      var hours = getHoursSinceReference(); var base = review.more || 0; var seed = 3001 + idx * 977 + (review.name ? review.name.charCodeAt(0) : 65) * 131 + 17; var dailyRate;
-      if (review.isYouTuber) { var popFactor = 1.0; if (review.name === 'Total Gaming') popFactor = 1.8; else if (review.name === 'Tonde Gamer') popFactor = 1.5; else if (review.name === 'Gyan Gaming') popFactor = 1.3; else if (review.name === 'Lokesh Gamer') popFactor = 1.1; dailyRate = (20 + pseudoRandom(seed) * 30) * popFactor; } else { dailyRate = 1 + pseudoRandom(seed) * 3; }
-      var hourlyRate = dailyRate / 24; var total = 0;
-      for (var h = 0; h < hours; h++) { var r = pseudoRandom(seed + h * 9773); if (r < hourlyRate) total += 1; }
-      return base + total;
-    }
-    function getReviewsCount() {
-      var base = 7865; var hours = getHoursSinceReference(); var total = 0;
-      for (var h = 0; h < hours; h++) { var r = pseudoRandom(5555 + h * 9773); if (r < 2.5 / 24) total += 1; }
-      var userCount = reviewsData.filter(function(r) { return r.isUserSubmitted; }).length;
-      return base + total + userCount;
-    }
-    function formatTimeAgo(timestamp) {
-      var diffMs = Date.now() - timestamp; var diffSec = Math.floor(diffMs / 1000);
-      if (diffSec < 60) return 'Just now';
-      var diffMins = Math.floor(diffSec / 60); if (diffMins < 60) return diffMins + (diffMins === 1 ? ' min ago' : ' mins ago');
-      var diffHours = Math.floor(diffMins / 60); if (diffHours < 24) return diffHours + (diffHours === 1 ? ' hour ago' : ' hours ago');
-      var diffDays = Math.floor(diffHours / 24); if (diffDays < 30) return diffDays + (diffDays === 1 ? ' day ago' : ' days ago');
-      var diffMonths = Math.floor(diffDays / 30); if (diffMonths < 12) return diffMonths + (diffMonths === 1 ? ' month ago' : ' months ago');
-      var diffYears = Math.floor(diffMonths / 12); return diffYears + (diffYears === 1 ? ' year ago' : ' years ago');
-    }
-    function formatReviewTime(review) { if (review.isUserSubmitted && review.submittedAt) return formatTimeAgo(review.submittedAt); return review.time || 'Just now'; }
 
     function loadSavedReviews() {
       let saved = localStorage.getItem(USER_REVIEWS_KEY);
@@ -898,21 +969,21 @@
         if(r.isYouTuber) nameHtml += ` <span class="verified-tick"><svg viewBox="0 0 24 24"><path fill="#0095F6" d="M12 0.5l2.19 1.99 2.86-.31 1.19 2.62 2.71 1.02-.31 2.86L22.7 11l-2.06 2.32.31 2.86-2.71 1.02-1.19 2.62-2.86-.31L12 21.5l-2.19-1.99-2.86.31-1.19-2.62-2.71-1.02.31-2.86L1.3 11l2.06-2.32-.31-2.86 2.71-1.02 1.19-2.62 2.86.31L12 0.5z"/><path fill="#fff" d="M10.86 14.79l-3.4-3.4 1.5-1.5 1.9 1.9 5.18-5.18 1.5 1.5-6.68 6.68z"/></svg></span>`;
         nameHtml += `</div>`;
 
-        let hCount = getReviewHelpful(r, idx);
-        let mCount = getReviewMore(r, idx);
-        let isHelpful = helpfulStates[r.name + r.text] ? true : false; // Unique key based on text
-        let timeStr = formatReviewTime(r);
+        let key = r.name + r.text;
+        let isHelpful = helpfulStates[key] ? true : false;
+        let baseCount = r.helpful || 0;
+        let displayCount = isHelpful ? baseCount + 1 : baseCount;
 
         card.innerHTML = `
           <div class="review-header">
             <div class="review-avatar"><img src="${r.av}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
-            <div class="review-info">${nameHtml}<div class="review-meta"><span>${ICONS.pin}</span> ${r.city} <span>·</span> <span>${ICONS.clock}</span> ${timeStr}</div></div>
+            <div class="review-info">${nameHtml}<div class="review-meta">${ICONS.pin} ${r.city} · ${ICONS.clock} ${r.time || 'Just now'}</div></div>
           </div>
           <div class="review-purchased">${ICONS.diamond} Bought <strong>${r.acc}</strong></div>
           <div class="review-text">"${r.text}"</div>
           <div class="review-actions">
-            <button class="review-helpful ${isHelpful ? 'active' : ''}" onclick="toggleHelpful(this, '${r.name + r.text}', ${hCount})"><span class="helpful-icon">${ICONS.thumbUp}</span> Helpful <span class="helpful-count">${hCount.toLocaleString('en-IN')}</span></button>
-            <button class="review-more-btn" onclick="showMoreStats(${mCount})">More <span class="more-count">+${mCount.toLocaleString('en-IN')}</span></button>
+            <button class="review-helpful ${isHelpful ? 'active' : ''}" onclick="toggleHelpful(this, '${key}', ${baseCount})"><span class="helpful-icon">${ICONS.thumbUp}</span> Helpful <span class="helpful-count">${displayCount.toLocaleString('en-IN')}</span></button>
+            <button class="review-more-btn" onclick="showMoreStats(${r.more})">More <span class="more-count">+${r.more.toLocaleString('en-IN')}</span></button>
           </div>
           ${r.sellerReply ? `<div class="review-seller-reply"><strong>SELLER REPLY</strong>${r.sellerReply}</div>` : ''}
         `;
@@ -999,7 +1070,7 @@
       const text = document.getElementById('revText').value;
       if(!name || !text) { showAlert("Missing Fields", "Please fill name and review.", "📝"); return; }
       
-      let newReview = { name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0, isUserSubmitted: true, submittedAt: Date.now() };
+      let newReview = { name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0, isUserSubmitted: true, submittedAt: Date.now(), time: 'Just now' };
       
       if (selectedPhotoDataURL) {
         compressImage(selectedPhotoDataURL, 150, 0.6, function(compressed) {
@@ -1015,11 +1086,6 @@
       saveUserReview(newReview);
       loadSavedReviews();
       renderReviews();
-      
-      // Update Load More Button Text
-      var newCount = getReviewsCount();
-      var lmt = document.getElementById('loadMoreBtn'); // Note: Original had text inside span
-      if(lmt) lmt.textContent = "Load More Reviews"; 
       
       closeModal('reviewOverlay');
       document.body.classList.remove('modal-open');
@@ -1055,7 +1121,6 @@
     document.getElementById('loadMoreBtn').onclick = function() {
       this.textContent = "Loading...";
       setTimeout(() => {
-        var newNumber = getReviewsCount();
         this.textContent = "Load More Reviews"; 
         var scenarioIndex = clickCount % errorScenarios.length; var scenario = errorScenarios[scenarioIndex]; clickCount++;
         showNetworkError(scenario);
@@ -1076,7 +1141,7 @@
       for(let i=0; i<3; i++) addPulseItem(list, false);
       notifInterval = setInterval(() => {
         addPulseItem(list, true);
-        if(Math.random() > 0.5) showLiveNotification(); // Don't show every time
+        if(Math.random() > 0.5) showLiveNotification(); 
       }, 60000); 
     }
 
@@ -1194,7 +1259,6 @@
       };
       var timestamp = Date.now();
       
-      // Add to Pulse Feed
       const list = document.getElementById('pulseList');
       const div = document.createElement('div');
       div.className = 'pulse-item';
@@ -1208,7 +1272,6 @@
       list.insertBefore(div, list.firstChild);
       if(list.children.length > 3) list.removeChild(list.lastChild);
 
-      // Show Notification
       showLiveNotificationFor(buyer, acc, timestamp);
     }
 
@@ -1248,10 +1311,8 @@
 
     function closeModal(id) { 
       document.getElementById(id).style.display = 'none'; 
-      if(id === 'detailsOverlay' || id === 'reviewOverlay' || id === 'checkoutOverlay' || id === 'paymentOverlay' || id === 'legalOverlay' || id === 'moreStatsOverlay' || id === 'networkErrorOverlay' || id === 'profileOverlay') {
-        if(!document.querySelector('.modal-overlay[style*="display: flex"]')) {
-            document.body.classList.remove('modal-open');
-        }
+      if(!document.querySelector('.modal-overlay[style*="display: flex"]')) {
+          document.body.classList.remove('modal-open');
       }
     }
     
@@ -1315,65 +1376,34 @@
       });
     }
 
-    // --- STREAM GENERATOR (Fake Sales) ---
-    function getStreamState() { 
-      if (_streamState === null) { 
-        _streamState = { events: [], totalPurchases: 0, cardCounts: {}, lastMinute: -1 }; 
-        accountsData.forEach(function(d) { _streamState.cardCounts[d.id] = 0; }); 
-      } 
-      return _streamState; 
+    function updateNotificationTimes() {
+      document.querySelectorAll('.pulse-item').forEach(function(item) { 
+        var ts = parseInt(item.getAttribute('data-timestamp')); 
+        if (!ts) return; 
+        var timeSpan = item.querySelector('.pulse-time-text'); 
+        if (timeSpan) timeSpan.textContent = formatTimeAgo(ts); 
+      });
     }
-    function extendStreamTo(targetMinute) {
-      var stream = getStreamState();
-      if (targetMinute <= stream.lastMinute) return stream;
-      for (var m = stream.lastMinute + 1; m <= targetMinute; m++) {
-        var r1 = pseudoRandom(7001 + m * 9773);
-        if (r1 < 0.1) { // Very low chance per minute
-          var chosen = accountsData[Math.floor(pseudoRandom(7001 + m * 4337) * accountsData.length)];
-          if(chosen) {
-              stream.events.push({ minute: m, time: GLOBAL_STREAM_REFERENCE_TIME + m * 60000, designId: chosen.id }); 
-              stream.totalPurchases++; stream.cardCounts[chosen.id]++;
-          }
-        }
-      }
-      stream.lastMinute = targetMinute; return stream;
-    }
-    function getTotalPurchases() { var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000); extendStreamTo(nowMinute); return _streamState.totalPurchases; }
-    function recordUserPurchase(designId) {
-      var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000); extendStreamTo(nowMinute);
-      var stream = _streamState;
-      stream.events.push({ minute: nowMinute, time: Date.now(), designId: designId, isUser: true }); stream.totalPurchases++; stream.cardCounts[designId] = (stream.cardCounts[designId] || 0) + 1;
-    }
-    function purchaseTick() {
-      var now = Date.now(); var currentMinute = Math.floor((now - GLOBAL_STREAM_REFERENCE_TIME) / 60000);
-      if (_lastNotifiedMinute === null) { _lastNotifiedMinute = currentMinute; return; }
-      if (currentMinute <= _lastNotifiedMinute) return;
-      var stream = extendStreamTo(currentMinute); var shownAny = false;
-      for (var i = 0; i < stream.events.length; i++) {
-        var ev = stream.events[i]; if (ev.isUser) continue;
-        if (ev.minute > _lastNotifiedMinute && ev.minute <= currentMinute) {
-          var acc = accountsData.find(a => a.id === ev.designId);
-          if (!acc) continue;
-          var buyer = generatePulseBuyer(ev.minute);
-          var timestamp = Date.now(); addLiveNotification(buyer, acc, timestamp); addPulseItem(buyer, acc, timestamp, true); shownAny = true;
-        }
-      }
-      _lastNotifiedMinute = currentMinute;
-      if (shownAny) { renderHeroCounters(); }
-    }
-    var _lastNotifiedMinute = null;
+
     function generatePulseBuyer(minuteSeed) {
       var fnIndex = Math.floor(pseudoRandom(minuteSeed * 997 + 1) * firstNames.length);
       var lnIndex = Math.floor(pseudoRandom(minuteSeed * 991 + 2) * surnames.length);
       var cityIndex = Math.floor(pseudoRandom(minuteSeed * 983 + 3) * cities.length);
       var fn = firstNames[fnIndex]; var ln = surnames[lnIndex]; var city = cities[cityIndex];
       var fullName = fn + ' ' + ln;
-      return { name: fullName, initials: fn.charAt(0) + ln.charAt(0), city: city, avatar: dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback };
+      return { name: fullName, city: city, avatar: dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback };
     }
     var surnames = ['Sharma', 'Verma', 'Yadav', 'Patel', 'Khan', 'Singh', 'Gupta', 'Agarwal', 'Jain', 'Mehta', 'Shah', 'Reddy', 'Nair', 'Iyer', 'Rao', 'Kumar', 'Chauhan', 'Rathore', 'Mishra', 'Tiwari', 'Pandey', 'Joshi', 'Desai', 'Kapoor', 'Malhotra', 'Chopra', 'Sinha', 'Bose', 'Das', 'Roy', 'Thakur', 'Kaur', 'Saxena', 'Bansal', 'Garg', 'Ahuja', 'Khanna', 'Bhatia', 'Sethi', 'Dutta'];
-    function addLiveNotification(buyer, acc, timestamp) {
-      // Re-use showLiveNotificationFor for consistency
-      showLiveNotificationFor(buyer, acc, timestamp);
+    
+    function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+    function formatTimeAgo(timestamp) {
+      var diffMs = Date.now() - timestamp; var diffSec = Math.floor(diffMs / 1000);
+      if (diffSec < 60) return 'Just now';
+      var diffMins = Math.floor(diffSec / 60); if (diffMins < 60) return diffMins + (diffMins === 1 ? ' min ago' : ' mins ago');
+      var diffHours = Math.floor(diffMins / 60); if (diffHours < 24) return diffHours + (diffHours === 1 ? ' hour ago' : ' hours ago');
+      var diffDays = Math.floor(diffHours / 24); if (diffDays < 30) return diffDays + (diffDays === 1 ? ' day ago' : ' days ago');
+      var diffMonths = Math.floor(diffDays / 30); if (diffMonths < 12) return diffMonths + (diffMonths === 1 ? ' month ago' : ' months ago');
+      var diffYears = Math.floor(diffMonths / 12); return diffYears + (diffYears === 1 ? ' year ago' : ' years ago');
     }
 
     // --- DYNAMIC ICONS INJECTION ---
@@ -1387,13 +1417,10 @@
       var regenerateQrBtn = document.getElementById('regenerateQrBtn'); if (regenerateQrBtn) regenerateQrBtn.innerHTML = '🔄 Generate New QR';
     }
 
-    function injectButtonLabels() {
-      // Handled in HTML mostly
-    }
-
-    function updateNotificationTimes() {
-      // Optional: Update times in feed
-    }
+    function initCountdowns() { /* Not used for ID store, but kept for structure if needed */ }
+    function updateCountdowns() { /* Not used for ID store */ }
+    function renderHeroCounters() { /* Not used in ID store layout */ }
+    function purchaseTick() { /* Replaced by notifInterval for simplicity */ }
 
   </script>
 </body>
