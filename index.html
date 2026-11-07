@@ -202,7 +202,7 @@
     .toast { background: #FFFFFF; color: #1A1A1A; padding: 14px 20px; border-radius: 18px; box-shadow: 0 10px 26px rgba(199,122,0,0.15), 0 5px 0 #E0A000; font-size: 13px; font-weight: 700; animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* Notification Fix (Added Thumbnail) */
+    /* Notification Fix (Added Thumbnail & Price) */
     .live-notif-container { position: fixed; top: 80px; right: 16px; z-index: 2200; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: 320px; }
     .live-notif { background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 28px rgba(199,122,0,0.15), 0 4px 0 rgba(242,226,192,0.6); animation: notifIn 0.4s ease, notifOut 0.4s ease 10.4s forwards; pointer-events: auto; overflow: hidden; transition: transform 0.2s, opacity 0.2s; }
     .live-notif.swiping { animation: none; }
@@ -338,7 +338,7 @@
           <label>WhatsApp Number</label>
           <input type="tel" id="buyerPhone" placeholder="e.g. 9876543210" maxlength="10" inputmode="numeric">
         </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom: 20px; padding: 10px; background:#FFF; border-radius:10px; border: 1px solid #FFE082;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 20px; padding: 12px 15px; background:linear-gradient(135deg, #FFFDF5 0%, #FFF6E0 100%); border-radius:12px; border: 2px dashed #FFC107; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);">
           <span style="font-weight:800; color:#8B5A00;">Total:</span>
           <span id="checkoutPrice" style="font-weight:900; font-size:18px; color:#0CFF00; text-shadow: 0 1px 0 #000;">₹0</span>
         </div>
@@ -756,7 +756,7 @@
       });
     }, 5000);
 
-    // --- REVIEWS LOGIC (With LocalStorage) ---
+    // --- REVIEWS LOGIC (With LocalStorage & Compression) ---
     const reviewsGrid = document.getElementById('reviewsGrid');
     const staticReviews = [
       { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber1.png", isYouTuber: true, helpful: 1247, more: 8932 },
@@ -772,6 +772,24 @@
       { name: "Karan Mehta", city: "Jaipur", text: "ID buy karne ke baad maine apna account set kiya, sab kuch bina kisi problem ke ho gaya! Best seller 💯", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review6.png", helpful: 112, more: 4230, sellerReply: 'Thanks Karan! Aapka support humesha 🙏' }
     ];
     let reviewsData = [];
+
+    function compressImage(dataURL, maxSize, quality, callback) {
+      var img = new Image();
+      img.onload = function() { 
+        try { 
+          var canvas = document.createElement('canvas'); 
+          var ratio = Math.min(maxSize / img.width, maxSize / img.height, 1); 
+          canvas.width = Math.round(img.width * ratio); 
+          canvas.height = Math.round(img.height * ratio); 
+          var ctx = canvas.getContext('2d'); 
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height); 
+          var compressed = canvas.toDataURL('image/jpeg', quality || 0.7); 
+          callback(compressed); 
+        } catch(e) { callback(dataURL); } 
+      };
+      img.onerror = function() { callback(dataURL); }; 
+      img.src = dataURL;
+    }
 
     function loadSavedReviews() {
       let saved = localStorage.getItem('ff_id_user_reviews');
@@ -874,14 +892,27 @@
       
       let newReview = { name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0 };
       
-      // Save to local storage and reload data
-      saveUserReview(newReview);
-      loadSavedReviews();
-      renderReviews();
-      
-      closeModal('reviewOverlay');
-      showToast("Review submitted successfully!");
-      // Reset form
+      if (selectedPhotoDataURL) {
+        compressImage(selectedPhotoDataURL, 150, 0.6, function(compressed) {
+          newReview.av = compressed;
+          saveUserReview(newReview);
+          loadSavedReviews();
+          renderReviews();
+          closeModal('reviewOverlay');
+          showToast("Review submitted successfully!");
+          resetReviewForm();
+        });
+      } else {
+        saveUserReview(newReview);
+        loadSavedReviews();
+        renderReviews();
+        closeModal('reviewOverlay');
+        showToast("Review submitted successfully!");
+        resetReviewForm();
+      }
+    }
+
+    function resetReviewForm() {
       document.getElementById('revName').value = '';
       document.getElementById('revCity').value = '';
       document.getElementById('revId').value = '';
@@ -909,7 +940,7 @@
       notifInterval = setInterval(() => {
         addPulseItem(list, true);
         showLiveNotification();
-      }, 45000); // Increased to 45s to not annoy user
+      }, 60000); // Increased to 60s
     }
 
     function addPulseItem(container, animate) {
@@ -971,13 +1002,13 @@
       notif.className = 'live-notif';
       notif.style.position = 'relative';
       notif.innerHTML = `
-        <div class="notif-card-badge">🛒 ID Sale <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
+        <div class="notif-card-badge">🛒 ID SALE <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
         <div class="notif-row">
           <div class="notif-avatar"><img src="${av}" onerror="this.src='${avatarFallback}'"></div>
           <div class="notif-content">
             <strong>${name}</strong> just bought <br>
             <span style="color:#FF0000; font-weight:700;">${acc.title}</span>
-            <div style="font-size:10px; color:#666; margin-top:2px;">for ₹${acc.price}</div>
+            <div style="font-size:11px; color:#0CFF00; font-weight:800; margin-top:2px; text-shadow:0 1px 0 #000;">for ₹${acc.price}</div>
           </div>
           <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.style.display='none'"></div>
         </div>
