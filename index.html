@@ -13,16 +13,11 @@
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Poppins', sans-serif; background: #000; min-height: 100vh; color: #1A1A1A; overflow-x: hidden; position: relative; }
     
-    /* RAW GITHUB BACKGROUND */
     body::before { content: ''; position: fixed; inset: 0; background: url('https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
     body::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: -1; }
     
     .img-blur { filter: blur(12px); transition: filter 0.4s ease; }
     img:not(.img-blur) { filter: blur(0); transition: filter 0.4s ease; }
-
-    /* 3D SVG ICONS */
-    .icon-3d { width: 1.1em; height: 1.1em; vertical-align: -0.18em; display: inline-block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
-    .trust-feature-card .tf-icon-wrap .icon-3d { width: 1.6em; height: 1.6em; }
 
     /* HEADER */
     .site-header { position: relative; z-index: 900; background: var(--deep-yellow-grad); border-radius: 28px; box-shadow: 0 8px 0 #C77A00, 0 15px 35px rgba(0,0,0,0.35); margin: 16px 12px 6px; border: 2px solid rgba(255,255,255,0.4); backdrop-filter: blur(12px); }
@@ -130,7 +125,7 @@
     @media (min-width: 700px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
     
     .review-card { background: #FFFFFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
-    .review-card.youtuber-card { border-top: 5px solid #1D9BF0; } /* Blue Line Fix */
+    .review-card.youtuber-card { border-top: 5px solid #1D9BF0; }
     .review-header { display: flex; gap: 10px; margin-bottom: 10px; }
     .review-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: #FDEEC8; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -180,7 +175,12 @@
     .action-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #076B00; }
     .action-btn:disabled { background: #CCC; box-shadow: 0 6px 0 #999; cursor: not-allowed; }
     
-    .payment-amount-box { background: #FFF; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 2px dashed #FFC107; }
+    /* Payment Box Fix */
+    .payment-amount-box { 
+      background: linear-gradient(135deg, #FFFDF5 0%, #FFF6E0 100%);
+      padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 15px; 
+      border: 2px dashed #FFC107; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+    }
     .qr-box { text-align: center; margin-bottom: 15px; position: relative; }
     .qr-box img { width: 200px; border-radius: 12px; border: 3px solid #FFC107; padding: 6px; background: #FFF; }
     .qr-timer { font-size: 12px; font-weight: 800; color: #FF0000; margin-bottom: 5px; }
@@ -202,17 +202,20 @@
     .toast { background: #FFFFFF; color: #1A1A1A; padding: 14px 20px; border-radius: 18px; box-shadow: 0 10px 26px rgba(199,122,0,0.15), 0 5px 0 #E0A000; font-size: 13px; font-weight: 700; animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
+    /* Notification Fix (Added Thumbnail) */
     .live-notif-container { position: fixed; top: 80px; right: 16px; z-index: 2200; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: 320px; }
     .live-notif { background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 28px rgba(199,122,0,0.15), 0 4px 0 rgba(242,226,192,0.6); animation: notifIn 0.4s ease, notifOut 0.4s ease 10.4s forwards; pointer-events: auto; overflow: hidden; transition: transform 0.2s, opacity 0.2s; }
     .live-notif.swiping { animation: none; }
     @keyframes notifIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes notifOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(110%); opacity: 0; } }
-    .live-notif .notif-card-badge { background: var(--deep-yellow-grad); color: #1A1A1A; font-size: 10.5px; font-weight: 800; padding: 8px 12px; text-transform: uppercase; }
+    .live-notif .notif-card-badge { background: var(--deep-yellow-grad); color: #1A1A1A; font-size: 10.5px; font-weight: 800; padding: 8px 12px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
     .live-notif .notif-row { display: flex; align-items: center; gap: 10px; padding: 11px 13px; }
-    .live-notif .notif-avatar { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: #FDEEC8; }
+    .live-notif .notif-avatar { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: #FDEEC8; border: 2px solid #FFC107; flex-shrink: 0; }
     .live-notif .notif-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .live-notif .notif-content { flex: 1; font-size: 11.5px; color: #4A4A4A; }
-    .notif-close-btn { position: absolute; top: 8px; right: 8px; background: transparent; border: none; color: #FFF; font-size: 16px; cursor: pointer; z-index: 10; }
+    .notif-id-thumb { width: 40px; height: 40px; border-radius: 8px; overflow: hidden; border: 1px solid #FFC107; margin-left: 5px; flex-shrink: 0; background: #FFF; }
+    .notif-id-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .notif-close-btn { background: transparent; border: none; color: #1A1A1A; font-size: 18px; cursor: pointer; font-weight: bold; padding: 0 5px; }
 
     .scroll-reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
@@ -476,6 +479,7 @@
     let qrTimerInterval = null;
     let qrTimeLeft = 300;
     let selectedPhotoDataURL = null; // For review photo
+    let notifInterval = null;
 
     window.onload = async () => {
       loadProfile();
@@ -483,6 +487,7 @@
       startLiveFeed();
       initScrollReveal();
       checkMusic();
+      loadSavedReviews();
       renderReviews();
       initViewerCounts();
       fetchDynamicAvatars();
@@ -751,9 +756,9 @@
       });
     }, 5000);
 
-    // --- REVIEWS LOGIC (With Helpful, More, Upload, Swipe) ---
+    // --- REVIEWS LOGIC (With LocalStorage) ---
     const reviewsGrid = document.getElementById('reviewsGrid');
-    let reviewsData = [
+    const staticReviews = [
       { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber1.png", isYouTuber: true, helpful: 1247, more: 8932 },
       { name: "Tonde Gamer", city: "Nepal", text: "Yaar, maine pehle socha tha ki online ID lena risky hoga, lekin ye seller ekdum genuine nikla. 😎", acc: "Level 72 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber2.png", isYouTuber: true, helpful: 2156, more: 12480 },
       { name: "Gyan Gaming", city: "Kolkata", text: "Payment ke baad ID details turant mil gayi. Highly recommended! 👍", acc: "Level 60 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber3.png", isYouTuber: true, helpful: 876, more: 5432 },
@@ -766,6 +771,26 @@
       { name: "Ramu Gamer", city: "Hyderabad", text: "Mene ID li aur account successful bhi ho gaya. Sab kuch easily ho gaya. Paisa vasool 🔥🔥", acc: "Level 50 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review5.png", helpful: 67, more: 2135 },
       { name: "Karan Mehta", city: "Jaipur", text: "ID buy karne ke baad maine apna account set kiya, sab kuch bina kisi problem ke ho gaya! Best seller 💯", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review6.png", helpful: 112, more: 4230, sellerReply: 'Thanks Karan! Aapka support humesha 🙏' }
     ];
+    let reviewsData = [];
+
+    function loadSavedReviews() {
+      let saved = localStorage.getItem('ff_id_user_reviews');
+      let userRevs = [];
+      if(saved) {
+        try { userRevs = JSON.parse(saved); } catch(e){}
+      }
+      // Merge user reviews at top
+      reviewsData = [...userRevs, ...staticReviews];
+    }
+
+    function saveUserReview(review) {
+      let saved = localStorage.getItem('ff_id_user_reviews');
+      let userRevs = saved ? JSON.parse(saved) : [];
+      userRevs.unshift(review);
+      // Keep only last 20 user reviews to avoid storage limits
+      userRevs = userRevs.slice(0, 20);
+      localStorage.setItem('ff_id_user_reviews', JSON.stringify(userRevs));
+    }
 
     function renderReviews() {
       reviewsGrid.innerHTML = '';
@@ -846,8 +871,14 @@
       const acc = document.getElementById('revId').value;
       const text = document.getElementById('revText').value;
       if(!name || !text) { showAlert("Missing Fields", "Please fill name and review.", "📝"); return; }
-      reviewsData.unshift({ name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0 });
+      
+      let newReview = { name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0 };
+      
+      // Save to local storage and reload data
+      saveUserReview(newReview);
+      loadSavedReviews();
       renderReviews();
+      
       closeModal('reviewOverlay');
       showToast("Review submitted successfully!");
       // Reset form
@@ -875,10 +906,10 @@
     function startLiveFeed() {
       const list = document.getElementById('pulseList');
       for(let i=0; i<3; i++) addPulseItem(list, false);
-      setInterval(() => {
+      notifInterval = setInterval(() => {
         addPulseItem(list, true);
         showLiveNotification();
-      }, 15000);
+      }, 45000); // Increased to 45s to not annoy user
     }
 
     function addPulseItem(container, animate) {
@@ -940,11 +971,15 @@
       notif.className = 'live-notif';
       notif.style.position = 'relative';
       notif.innerHTML = `
-        <button class="notif-close-btn" onclick="this.parentElement.remove()">×</button>
-        <div class="notif-card-badge">💎 ID Sale</div>
+        <div class="notif-card-badge">🛒 ID Sale <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
         <div class="notif-row">
           <div class="notif-avatar"><img src="${av}" onerror="this.src='${avatarFallback}'"></div>
-          <div class="notif-content"><strong>${name}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span></div>
+          <div class="notif-content">
+            <strong>${name}</strong> just bought <br>
+            <span style="color:#FF0000; font-weight:700;">${acc.title}</span>
+            <div style="font-size:10px; color:#666; margin-top:2px;">for ₹${acc.price}</div>
+          </div>
+          <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.style.display='none'"></div>
         </div>
       `;
       cont.appendChild(notif);

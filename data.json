@@ -20,7 +20,7 @@
     "price": 1200,
     "status": "Sold",
     "folder": "id2",
-    "images": ["1.jpg", "2.jpg", "3.jpg"],
+    "images": ["1.jpg"],
     "level": 54,
     "rank": "Heroic",
     "emailBind": "Yes",
