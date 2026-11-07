@@ -7,16 +7,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
   <style>
     :root { --deep-yellow-grad: linear-gradient(180deg, #FFC107 0%, #FF9800 100%); --green-grad: linear-gradient(180deg, #0CFF00 0%, #09B300 100%); }
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Poppins', sans-serif; background: #000; min-height: 100vh; color: #1A1A1A; overflow-x: hidden; position: relative; }
     
+    /* RAW GITHUB BACKGROUND */
     body::before { content: ''; position: fixed; inset: 0; background: url('https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
     body::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: -1; }
     
     .img-blur { filter: blur(12px); transition: filter 0.4s ease; }
     img:not(.img-blur) { filter: blur(0); transition: filter 0.4s ease; }
+
+    /* 3D SVG ICONS */
+    .icon-3d { width: 1.1em; height: 1.1em; vertical-align: -0.18em; display: inline-block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
+    .trust-feature-card .tf-icon-wrap .icon-3d { width: 1.6em; height: 1.6em; }
 
     /* HEADER */
     .site-header { position: relative; z-index: 900; background: var(--deep-yellow-grad); border-radius: 28px; box-shadow: 0 8px 0 #C77A00, 0 15px 35px rgba(0,0,0,0.35); margin: 16px 12px 6px; border: 2px solid rgba(255,255,255,0.4); backdrop-filter: blur(12px); }
@@ -107,6 +113,14 @@
     .view-btn { margin-top: 6px; width: 100%; background: var(--deep-yellow-grad); color: #1A1A1A; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #C77A00; transition: all 0.1s; }
     .view-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #C77A00; }
     .view-btn:disabled { background: #CCC; box-shadow: 0 4px 0 #999; }
+    
+    /* Live Viewers Badge */
+    .live-viewers-badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 100px; background: linear-gradient(180deg, #FF0000 0%, #CC0000 100%); border: none; font-size: 9.5px; font-weight: 700; letter-spacing: 0.2px; color: #FFFFFF; box-shadow: 0 3px 0 #800000, inset 0 1px 0 rgba(255,255,255,0.2); pointer-events: none; user-select: none; white-space: nowrap; }
+    .live-viewers-badge .eye { font-size: 10px; line-height: 1; }
+    .live-viewers-badge .live-pulse-dot { width: 5px; height: 5px; border-radius: 50%; background: #FFFFFF; animation: liveDotBlink 1.4s ease-in-out infinite; }
+    .live-viewers-badge .vcount { color: #FFFFFF; font-weight: 900; font-variant-numeric: tabular-nums; transition: transform 0.25s ease; }
+    .live-viewers-badge .vcount.bump { transform: scale(1.18); }
+    @keyframes liveDotBlink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
 
     /* REVIEWS */
     .reviews-section { margin-bottom: 36px; }
@@ -116,9 +130,7 @@
     @media (min-width: 700px) { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
     
     .review-card { background: #FFFFFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; overflow: hidden; }
-    /* Blue line fix (Using border-top instead of pseudo-element) */
-    .review-card.youtuber-card { border-top: 5px solid #1D9BF0; }
-    
+    .review-card.youtuber-card { border-top: 5px solid #1D9BF0; } /* Blue Line Fix */
     .review-header { display: flex; gap: 10px; margin-bottom: 10px; }
     .review-avatar { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: #FDEEC8; }
     .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -172,6 +184,7 @@
     .qr-box { text-align: center; margin-bottom: 15px; position: relative; }
     .qr-box img { width: 200px; border-radius: 12px; border: 3px solid #FFC107; padding: 6px; background: #FFF; }
     .qr-timer { font-size: 12px; font-weight: 800; color: #FF0000; margin-bottom: 5px; }
+    .regenerate-qr-btn { background: #FF0000; color: #FFF; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; margin-bottom: 10px; display: none; box-shadow: 0 2px 0 #800000; }
     
     .success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(8px); }
     .success-modal { background: #FFF; border-radius: 24px; padding: 30px 20px; max-width: 350px; text-align: center; }
@@ -190,7 +203,8 @@
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
     .live-notif-container { position: fixed; top: 80px; right: 16px; z-index: 2200; display: flex; flex-direction: column; gap: 10px; pointer-events: none; max-width: 320px; }
-    .live-notif { background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 28px rgba(199,122,0,0.15), 0 4px 0 rgba(242,226,192,0.6); animation: notifIn 0.4s ease, notifOut 0.4s ease 10.4s forwards; pointer-events: auto; overflow: hidden; }
+    .live-notif { background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 28px rgba(199,122,0,0.15), 0 4px 0 rgba(242,226,192,0.6); animation: notifIn 0.4s ease, notifOut 0.4s ease 10.4s forwards; pointer-events: auto; overflow: hidden; transition: transform 0.2s, opacity 0.2s; }
+    .live-notif.swiping { animation: none; }
     @keyframes notifIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes notifOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(110%); opacity: 0; } }
     .live-notif .notif-card-badge { background: var(--deep-yellow-grad); color: #1A1A1A; font-size: 10.5px; font-weight: 800; padding: 8px 12px; text-transform: uppercase; }
@@ -239,11 +253,7 @@
         <span>🛡️ Verified IDs</span> <span>•</span> <span>⚡ Instant Handover</span> <span>•</span> <span>🔥 Best Rates</span>
       </div>
       <div class="trusted-by-card">
-        <div class="trusted-by-avatars">
-          <div class="trusted-by-avatar"><img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg"></div>
-          <div class="trusted-by-avatar"><img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"></div>
-          <div class="trusted-by-avatar"><img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/0416c2de-9104-4c01-a85e-a250e1a6b4ad.jpg"></div>
-        </div>
+        <div class="trusted-by-avatars" id="trustedByAvatars"></div>
         <div class="trusted-by-text">+9,935 buyers trust us</div>
       </div>
     </section>
@@ -252,10 +262,10 @@
       <h2>Why Trust Us?</h2>
       <p class="why-trust-sub">Thousands of gamers buy IDs here every day</p>
       <div class="trust-features">
-        <div class="trust-feature-card"><div class="tf-icon-wrap">🎮</div><div class="tf-label">10,000+</div><div class="tf-value">Happy Gamers</div></div>
-        <div class="trust-feature-card"><div class="tf-icon-wrap">🏆</div><div class="tf-label">5,000+</div><div class="tf-value">IDs Sold</div></div>
-        <div class="trust-feature-card"><div class="tf-icon-wrap">✅</div><div class="tf-label">100%</div><div class="tf-value">Verified Accounts</div></div>
-        <div class="trust-feature-card"><div class="tf-icon-wrap">🔒</div><div class="tf-label">100%</div><div class="tf-value">Secure Payment</div></div>
+        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon1"></div><div class="tf-label">10,000+</div><div class="tf-value">Happy Gamers</div></div>
+        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon2"></div><div class="tf-label">5,000+</div><div class="tf-value">IDs Sold</div></div>
+        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon3"></div><div class="tf-label">100%</div><div class="tf-value">Verified Accounts</div></div>
+        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon4"></div><div class="tf-label">100%</div><div class="tf-value">Secure Payment</div></div>
       </div>
     </section>
 
@@ -348,6 +358,7 @@
           <img src="https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/qr-code.png">
           <p style="font-size: 12px; margin-top: 8px; font-weight: 600;">Scan with any UPI app</p>
         </div>
+        <button type="button" class="regenerate-qr-btn" id="regenerateQrBtn">🔄 Generate New QR</button>
         <div class="field-group">
           <label>Transaction ID (UTR)</label>
           <input type="text" id="txnIdInput" placeholder="Enter UTR" maxlength="22" style="text-transform: uppercase;">
@@ -368,11 +379,23 @@
     <div class="confetti-container" id="confettiContainer"></div>
   </div>
 
+  <!-- WRITE REVIEW MODAL -->
   <div class="modal-overlay" id="reviewOverlay">
     <div class="modal" style="max-width: 400px;">
       <button class="modal-close" onclick="closeModal('reviewOverlay')">&times;</button>
       <div class="modal-body">
         <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 15px; text-align:center;">Write a Review</h2>
+        <div class="field-group">
+          <label>Your Photo (Optional)</label>
+          <div class="photo-upload-row" style="display:flex; align-items:center; gap:10px;">
+            <div class="photo-upload-area" id="photoUploadArea" style="width:60px; height:60px; border-radius:50%; border:2px dashed #FFC107; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; overflow:hidden;">
+              <span class="plus-icon" id="photoPlusIcon" style="font-size:24px; color:#FF9800;">+</span>
+              <button type="button" class="photo-remove-btn" id="photoRemoveBtn" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:18px; height:18px; font-size:12px; cursor:pointer; display:none;">×</button>
+            </div>
+            <span style="font-size:11px; color:#666;">Tap to upload photo 📷</span>
+          </div>
+          <input type="file" id="reviewPhotoInput" accept="image/*" style="display: none;" />
+        </div>
         <div class="field-group"><label>Your Name</label><input type="text" id="revName" placeholder="e.g. Rahul"></div>
         <div class="field-group"><label>City</label><input type="text" id="revCity" placeholder="e.g. Delhi"></div>
         <div class="field-group"><label>Purchased ID</label><input type="text" id="revId" placeholder="e.g. Level 65 ID"></div>
@@ -407,6 +430,35 @@
     </div>
   </div>
 
+  <!-- MORE STATS MODAL -->
+  <div class="modal-overlay" id="moreStatsOverlay">
+    <div class="modal" style="max-width: 340px;">
+      <button class="modal-close" onclick="closeModal('moreStatsOverlay')">&times;</button>
+      <div class="modal-body" style="text-align:center;">
+        <div style="font-size: 46px; margin-bottom: 12px;">👍</div>
+        <div id="moreStatsNumber" style="font-size: 42px; font-weight: 800; color: #FF9800; line-height: 1; margin-bottom: 8px;">5,788+</div>
+        <div style="font-size: 12px; color: #6B5A3E; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 16px; text-transform: uppercase;">People Found This Helpful</div>
+        <div style="height: 1px; background: #FDEEC8; margin: 16px 0;"></div>
+        <div style="display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 8px 16px; border-radius: 100px; margin-bottom: 12px;">🛡️ Trusted by Verified Buyers</div>
+        <div style="font-size: 12px; color: #8B7D65; line-height: 1.6; max-width: 280px; margin: 0 auto;">Join thousands of satisfied customers who trust this seller.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NETWORK ERROR MODAL -->
+  <div class="modal-overlay" id="networkErrorOverlay">
+    <div class="modal" style="max-width: 360px;">
+      <button class="modal-close" onclick="closeModal('networkErrorOverlay')">&times;</button>
+      <div class="modal-body" style="text-align: center;">
+        <div id="networkErrorIcon" style="font-size: 48px; margin-bottom: 12px;">📡</div>
+        <div id="networkErrorTitle" style="font-size: 20px; font-weight: 800; color: #F59E0B; margin-bottom: 8px;">Connection Issue</div>
+        <div id="networkErrorMessage" style="font-size: 12.5px; color: #6B5A3E; line-height: 1.65; margin-bottom: 18px; max-width: 300px; margin-left: auto; margin-right: auto;">Unable to load reviews.</div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 10.5px; color: #8B7D65; background: #FFFBF2; padding: 8px 14px; border-radius: 100px; margin-bottom: 18px; width: fit-content; margin-left: auto; margin-right: auto;"><span id="networkErrorDot" style="width: 7px; height: 7px; border-radius: 50%; background: #EF4444;"></span><span id="networkErrorDetails">Checking connection...</span></div>
+        <button class="action-btn" onclick="closeModal('networkErrorOverlay')" style="background: var(--deep-yellow-grad); box-shadow: 0 4px 0 #C77A00;">🔄 Retry Loading Reviews</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toastContainer"></div>
   <div class="live-notif-container" id="liveNotifContainer"></div>
 
@@ -423,6 +475,7 @@
     let currentOrder = null;
     let qrTimerInterval = null;
     let qrTimeLeft = 300;
+    let selectedPhotoDataURL = null; // For review photo
 
     window.onload = async () => {
       loadProfile();
@@ -431,6 +484,8 @@
       initScrollReveal();
       checkMusic();
       renderReviews();
+      initViewerCounts();
+      fetchDynamicAvatars();
     };
 
     async function loadAccounts() {
@@ -443,7 +498,6 @@
           const folderPath = acc.folder ? acc.folder + '/' : '';
           const imgList = acc.images || [];
           
-          // Image link generator
           const mainImg = imgList.length > 0 ? BASE_URL + folderPath + imgList[0] : 'https://via.placeholder.com/400x250/F3F4F6/FFC107?text=No+Image';
           const gallery = imgList.map(img => BASE_URL + folderPath + img);
           
@@ -475,6 +529,7 @@
         card.className = `grid-card ${isSold ? 'sold' : ''}`;
         
         const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
+        const viewerBase = viewerState[acc.id] ? viewerState[acc.id].current : 50;
 
         card.innerHTML = `
           <div class="id-image-box">
@@ -486,6 +541,9 @@
           <div class="id-info">
             <div class="id-title">${acc.title}</div>
             <div class="id-bind-status"><span>📧 Email: ${acc.emailBind}</span><span>📱 FB: ${acc.fbBind}</span></div>
+            <div class="card-bottom-row" style="margin-top: 4px;">
+              <div class="live-viewers-badge" data-design-id="${acc.id}"><span class="live-pulse-dot"></span><span class="eye">👁️</span><span class="vcount">${viewerBase}</span></div>
+            </div>
             <button class="view-btn" onclick="${isSold ? '' : `openDetails('${acc.id}')`}" ${isSold ? 'disabled' : ''}>
               ${isSold ? 'Sold Out' : 'View Details & Buy'}
             </button>
@@ -563,18 +621,25 @@
       currentOrder = { title: currentAccount.title, txn: txn, phone: document.getElementById('buyerPhone').value };
       document.getElementById('successOverlay').style.display = 'flex';
       spawnConfetti();
+      playOrderSound();
     };
 
     function startQrTimer() {
       clearInterval(qrTimerInterval);
       qrTimeLeft = 300;
       const timerEl = document.getElementById('qrTimer');
+      const regenBtn = document.getElementById('regenerateQrBtn');
       timerEl.textContent = '⏳ Expires in: 05:00';
+      regenBtn.style.display = 'none';
+      document.getElementById('confirmPayBtn').disabled = false;
+      
       qrTimerInterval = setInterval(() => {
         qrTimeLeft--;
         if(qrTimeLeft <= 0) {
           clearInterval(qrTimerInterval);
           timerEl.textContent = '❌ QR Expired. Close and try again.';
+          regenBtn.style.display = 'block';
+          document.getElementById('confirmPayBtn').disabled = true;
         } else {
           const m = Math.floor(qrTimeLeft / 60);
           const s = qrTimeLeft % 60;
@@ -583,12 +648,19 @@
       }, 1000);
     }
 
+    document.getElementById('regenerateQrBtn').onclick = () => {
+      document.getElementById('txnIdInput').value = '';
+      startQrTimer();
+      showToast('New QR generated! You have 5 more minutes.', 'success');
+    };
+
     document.getElementById('contactSellerBtn').onclick = () => {
       const sellerPhone = "917808465636"; // APNA WHATSAPP NUMBER
       const msg = `Hi, I just purchased ${currentOrder.title}. My Txn ID is ${currentOrder.txn}. Please handover the ID.`;
       window.open(`https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`, '_blank');
     };
 
+    // --- PROFILE LOGIC ---
     function loadProfile() {
       const saved = localStorage.getItem('ff_profile_phone');
       if(saved) document.getElementById('profileBtn').classList.add('saved');
@@ -609,6 +681,7 @@
       }
     }
 
+    // --- MUSIC ---
     const bgMusic = document.getElementById('bgMusic');
     const musicBtn = document.getElementById('musicBtn');
     let isPlaying = false;
@@ -630,61 +703,55 @@
       else { bgMusic.play(); isPlaying = true; musicBtn.classList.add('playing'); }
     };
 
+    // --- DYNAMIC AVATARS & VIEWERS ---
     const firstNames = ['Aarav', 'Vivaan', 'Aditya', 'Arjun', 'Rohan', 'Karan', 'Rahul', 'Amit', 'Vikram', 'Raj', 'Suraj', 'Priya', 'Sneha'];
     const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Pune', 'Hyderabad', 'Jaipur', 'Chennai'];
-    const avatars = ["https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg", "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/024ebf22-908c-468c-bc45-41ffae996abe.jpg"];
+    let dynamicAvatars = [];
     const avatarFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23FFC107'/><text x='50%' y='50%' font-size='20' text-anchor='middle' dy='.3em'>👤</text></svg>";
 
-    function startLiveFeed() {
-      const list = document.getElementById('pulseList');
-      for(let i=0; i<3; i++) addPulseItem(list, false);
-      setInterval(() => {
-        addPulseItem(list, true);
-        showLiveNotification();
-      }, 15000);
+    function fetchDynamicAvatars() {
+      fetch('https://api.github.com/repos/forviews1st-hub/ff-id-sale-store/contents/avatars')
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            dynamicAvatars = data.filter(item => item.type === 'file' && /\.(jpg|jpeg|png|webp)$/i.test(item.name)).map(item => "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/" + item.name);
+            renderTrustedByRow();
+          }
+        }).catch(()=>{
+            dynamicAvatars = ["https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/020e7831d949cbc080e9037106bbbd7.jpg"];
+            renderTrustedByRow();
+        });
     }
 
-    function addPulseItem(container, animate) {
-      const name = firstNames[Math.floor(Math.random()*firstNames.length)];
-      const city = cities[Math.floor(Math.random()*cities.length)];
-      const av = avatars[Math.floor(Math.random()*avatars.length)];
-      const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
-      
-      const div = document.createElement('div');
-      div.className = 'pulse-item';
-      div.innerHTML = `
-        <div class="pulse-avatar"><img src="${av}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
-        <div class="pulse-content">
-          <div class="pulse-header-row">${name} <span style="font-size:10px; color:#666; font-weight:500;">from ${city}</span></div>
-          <div class="pulse-action-row">just bought <span class="card-name">${acc.title}</span></div>
-        </div>
-      `;
-      if(animate) container.insertBefore(div, container.firstChild);
-      else container.appendChild(div);
-      if(container.children.length > 3) container.removeChild(container.lastChild);
+    function renderTrustedByRow() {
+      const el = document.getElementById('trustedByAvatars');
+      el.innerHTML = '';
+      if(dynamicAvatars.length === 0) return;
+      for(let i=0; i<3; i++) {
+        let av = dynamicAvatars[Math.floor(Math.random() * dynamicAvatars.length)];
+        el.innerHTML += `<div class="trusted-by-avatar"><img src="${av}" onerror="this.src='${avatarFallback}'"></div>`;
+      }
     }
 
-    function showLiveNotification() {
-      const cont = document.getElementById('liveNotifContainer');
-      const name = firstNames[Math.floor(Math.random()*firstNames.length)];
-      const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
-      const av = avatars[Math.floor(Math.random()*avatars.length)];
-      
-      const notif = document.createElement('div');
-      notif.className = 'live-notif';
-      notif.style.position = 'relative';
-      notif.innerHTML = `
-        <button class="notif-close-btn" onclick="this.parentElement.remove()">×</button>
-        <div class="notif-card-badge">💎 ID Sale</div>
-        <div class="notif-row">
-          <div class="notif-avatar"><img src="${av}" onerror="this.src='${avatarFallback}'"></div>
-          <div class="notif-content"><strong>${name}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span></div>
-        </div>
-      `;
-      cont.appendChild(notif);
-      setTimeout(() => { notif.remove(); }, 10000);
+    let viewerState = {};
+    function initViewerCounts() {
+      accountsData.forEach(d => {
+        viewerState[d.id] = { base: Math.floor(Math.random() * 200) + 150, current: 0 };
+        viewerState[d.id].current = viewerState[d.id].base;
+      });
     }
+    setInterval(() => {
+      accountsData.forEach(d => {
+        let s = viewerState[d.id];
+        if(!s) return;
+        let delta = Math.floor(Math.random() * 5) - 2;
+        s.current += delta;
+        let badge = document.querySelector(`.live-viewers-badge[data-design-id="${d.id}"] .vcount`);
+        if(badge) badge.textContent = s.current;
+      });
+    }, 5000);
 
+    // --- REVIEWS LOGIC (With Helpful, More, Upload, Swipe) ---
     const reviewsGrid = document.getElementById('reviewsGrid');
     let reviewsData = [
       { name: "Total Gaming", city: "Gujarat", text: "Bhai account ekdum wahi tha jo photos mein dikhaya tha. Genuine hai! 🔥", acc: "Level 65 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/youtuber1.png", isYouTuber: true, helpful: 1247, more: 8932 },
@@ -718,8 +785,8 @@
           <div class="review-purchased">💎 Bought <strong>${r.acc}</strong></div>
           <div class="review-text">"${r.text}"</div>
           <div class="review-actions">
-            <button class="review-helpful" onclick="this.classList.toggle('active')">👍 Helpful <span>${r.helpful}</span></button>
-            <button class="review-more-btn" onclick="showAlert('Helpful Stats', '${r.more.toLocaleString()} people found this review more helpful.', '📊')">More <span>+${r.more}</span></button>
+            <button class="review-helpful" onclick="toggleHelpful(this, ${r.helpful})">👍 Helpful <span>${r.helpful}</span></button>
+            <button class="review-more-btn" onclick="showMoreStats(${r.more})">More <span>+${r.more}</span></button>
           </div>
           ${r.sellerReply ? `<div class="review-seller-reply"><strong>SELLER REPLY</strong>${r.sellerReply}</div>` : ''}
         `;
@@ -727,30 +794,165 @@
       });
     }
 
+    function toggleHelpful(btn, baseCount) {
+      let isActive = btn.classList.contains('active');
+      let countSpan = btn.querySelector('span');
+      if(isActive) {
+        btn.classList.remove('active');
+        countSpan.textContent = baseCount;
+      } else {
+        btn.classList.add('active');
+        countSpan.textContent = baseCount + 1;
+      }
+    }
+
+    function showMoreStats(count) {
+      document.getElementById('moreStatsNumber').textContent = count.toLocaleString('en-IN') + '+';
+      document.getElementById('moreStatsOverlay').style.display = 'flex';
+    }
+
+    // Review Photo Upload
+    const photoUploadArea = document.getElementById('photoUploadArea');
+    const photoInput = document.getElementById('reviewPhotoInput');
+    const photoPlusIcon = document.getElementById('photoPlusIcon');
+    const photoRemoveBtn = document.getElementById('photoRemoveBtn');
+
+    photoUploadArea.onclick = () => photoInput.click();
+    photoInput.onchange = (e) => {
+      let file = e.target.files[0]; if(!file) return;
+      let reader = new FileReader();
+      reader.onload = (ev) => {
+        selectedPhotoDataURL = ev.target.result;
+        photoUploadArea.style.backgroundImage = `url(${selectedPhotoDataURL})`;
+        photoUploadArea.style.backgroundSize = 'cover';
+        photoUploadArea.style.backgroundPosition = 'center';
+        photoPlusIcon.style.display = 'none';
+        photoRemoveBtn.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    };
+    photoRemoveBtn.onclick = (e) => {
+      e.stopPropagation();
+      selectedPhotoDataURL = null;
+      photoUploadArea.style.backgroundImage = 'none';
+      photoPlusIcon.style.display = 'block';
+      photoRemoveBtn.style.display = 'none';
+      photoInput.value = '';
+    };
+
     function submitReview() {
       const name = document.getElementById('revName').value;
       const city = document.getElementById('revCity').value;
       const acc = document.getElementById('revId').value;
       const text = document.getElementById('revText').value;
       if(!name || !text) { showAlert("Missing Fields", "Please fill name and review.", "📝"); return; }
-      reviewsData.unshift({ name, city, acc, text, av: avatars[0], helpful: 0, more: 0 });
+      reviewsData.unshift({ name, city, acc, text, av: selectedPhotoDataURL || avatarFallback, helpful: 0, more: 0 });
       renderReviews();
       closeModal('reviewOverlay');
       showToast("Review submitted successfully!");
+      // Reset form
+      document.getElementById('revName').value = '';
+      document.getElementById('revCity').value = '';
+      document.getElementById('revId').value = '';
+      document.getElementById('revText').value = '';
+      photoRemoveBtn.onclick(new Event('click'));
     }
 
     document.getElementById('writeReviewBtn').onclick = () => {
       document.getElementById('reviewOverlay').style.display = 'flex';
     };
 
+    // Fake Network Error
     document.getElementById('loadMoreBtn').onclick = function() {
       this.textContent = "Loading...";
       setTimeout(() => {
         this.textContent = "Load More Reviews";
-        showAlert("Network Error", "Unable to load more reviews right now. Please check your internet connection.", "📡");
+        document.getElementById('networkErrorOverlay').style.display = 'flex';
       }, 1500);
     };
 
+    // --- LIVE FEED & NOTIFICATIONS ---
+    function startLiveFeed() {
+      const list = document.getElementById('pulseList');
+      for(let i=0; i<3; i++) addPulseItem(list, false);
+      setInterval(() => {
+        addPulseItem(list, true);
+        showLiveNotification();
+      }, 15000);
+    }
+
+    function addPulseItem(container, animate) {
+      const name = firstNames[Math.floor(Math.random()*firstNames.length)];
+      const city = cities[Math.floor(Math.random()*cities.length)];
+      const av = dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback;
+      const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
+      
+      const div = document.createElement('div');
+      div.className = 'pulse-item';
+      div.innerHTML = `
+        <div class="pulse-avatar"><img src="${av}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
+        <div class="pulse-content">
+          <div class="pulse-header-row">${name} <span style="font-size:10px; color:#666; font-weight:500;">from ${city}</span></div>
+          <div class="pulse-action-row">just bought <span class="card-name">${acc.title}</span></div>
+        </div>
+      `;
+      if(animate) container.insertBefore(div, container.firstChild);
+      else container.appendChild(div);
+      if(container.children.length > 3) container.removeChild(container.lastChild);
+    }
+
+    function makeSwipeDismissable(el) {
+      let startX = 0, currentX = 0, isDragging = false;
+      el.addEventListener('touchstart', e => { startX = e.touches[0].clientX; currentX = 0; isDragging = true; el.classList.add('swiping'); }, {passive: true});
+      el.addEventListener('touchmove', e => {
+        if(!isDragging) return;
+        let dx = e.touches[0].clientX - startX;
+        if(dx > 0) {
+          currentX = dx;
+          el.style.transform = `translateX(${dx}px)`;
+          el.style.opacity = 1 - Math.min(dx / 250, 0.6);
+        }
+      }, {passive: true});
+      el.addEventListener('touchend', () => {
+        if(!isDragging) return;
+        isDragging = false;
+        el.classList.remove('swiping');
+        if(currentX > 80) {
+          el.style.transform = 'translateX(120%)';
+          el.style.opacity = 0;
+          setTimeout(() => el.remove(), 300);
+        } else {
+          el.style.transition = 'transform 0.2s, opacity 0.2s';
+          el.style.transform = '';
+          el.style.opacity = '';
+          setTimeout(() => el.style.transition = '', 200);
+        }
+      });
+    }
+
+    function showLiveNotification() {
+      const cont = document.getElementById('liveNotifContainer');
+      const name = firstNames[Math.floor(Math.random()*firstNames.length)];
+      const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
+      const av = dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback;
+      
+      const notif = document.createElement('div');
+      notif.className = 'live-notif';
+      notif.style.position = 'relative';
+      notif.innerHTML = `
+        <button class="notif-close-btn" onclick="this.parentElement.remove()">×</button>
+        <div class="notif-card-badge">💎 ID Sale</div>
+        <div class="notif-row">
+          <div class="notif-avatar"><img src="${av}" onerror="this.src='${avatarFallback}'"></div>
+          <div class="notif-content"><strong>${name}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span></div>
+        </div>
+      `;
+      cont.appendChild(notif);
+      makeSwipeDismissable(notif);
+      setTimeout(() => { notif.remove(); }, 10000);
+    }
+
+    // --- UTILS & HELPERS ---
     function openLegal(type) {
       const title = type === 'privacy' ? 'Privacy Policy' : 'Terms of Service';
       const content = type === 'privacy' 
@@ -798,12 +1000,36 @@
       setTimeout(() => cont.innerHTML = '', 4000);
     }
 
+    function playOrderSound() {
+      try { 
+        var ctx = new (window.AudioContext || window.webkitAudioContext)(); 
+        var o = ctx.createOscillator(); var g = ctx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(880, ctx.currentTime);
+        g.gain.setValueAtTime(0.1, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.5);
+      } catch(e) {}
+    }
+
     function initScrollReveal() {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } });
       }, { threshold: 0.1 });
       document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
     }
+
+    // Inject 3D SVG Icons
+    (function injectIcons() {
+      const ICONS = {
+        controller: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icCtrlA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><path d="M6 8C3 8 1.5 10 1.5 13C1.5 16 3 18 5 18C6.5 18 7.5 17 8.5 16H15.5C16.5 17 17.5 18 19 18C21 18 22.5 16 22.5 13C22.5 10 21 8 18 8Z" fill="url(#icCtrlA)"/><rect x="5" y="11.5" width="4" height="1.3" rx="0.6" fill="#FFFFFF"/><rect x="6.35" y="10.2" width="1.3" height="4" rx="0.6" fill="#FFFFFF"/><circle cx="17" cy="12" r="1" fill="#FFFFFF"/><circle cx="18.8" cy="13.8" r="1" fill="#FFFFFF"/></svg>',
+        trophy: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icTrophyA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M6 3H18V6C18 10 15.5 13 12 13C8.5 13 6 10 6 6Z" fill="url(#icTrophyA)"/><path d="M6 5H3V7C3 8.5 4 9.5 6 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M18 5H21V7C21 8.5 20 9.5 18 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><rect x="10.5" y="13" width="3" height="4" fill="#E6A100"/><rect x="8" y="17" width="8" height="2.5" rx="0.8" fill="url(#icTrophyA)"/><rect x="7" y="19.5" width="10" height="1.8" rx="0.9" fill="#B36A00"/><ellipse cx="10" cy="5.5" rx="1.2" ry="0.8" fill="#FFFFFF" opacity="0.6"/></svg>',
+        check: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icCheck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#icCheck)"/><path d="M7 12.2L10.5 15.5L17 9" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="2.5" fill="#FFFFFF" opacity="0.25"/></svg>',
+        lock: '<svg class="icon-3d" viewBox="0 0 24 24"><defs><linearGradient id="icLockA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M7 10V7C7 4.5 9 3 12 3C15 3 17 4.5 17 7V10" stroke="#B36A00" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2" fill="url(#icLockA)"/><circle cx="12" cy="15" r="1.7" fill="#8B5A00"/><rect x="11.2" y="15" width="1.6" height="3.5" rx="0.8" fill="#8B5A00"/><ellipse cx="9" cy="12.5" rx="2" ry="1" fill="#FFFFFF" opacity="0.4"/></svg>'
+      };
+      document.getElementById('tfIcon1').innerHTML = ICONS.controller;
+      document.getElementById('tfIcon2').innerHTML = ICONS.trophy;
+      document.getElementById('tfIcon3').innerHTML = ICONS.check;
+      document.getElementById('tfIcon4').innerHTML = ICONS.lock;
+    })();
   </script>
 </body>
 </html>
