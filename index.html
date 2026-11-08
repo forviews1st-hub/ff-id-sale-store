@@ -182,7 +182,6 @@
     .action-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #076B00; }
     .action-btn:disabled { background: #CCC; box-shadow: 0 6px 0 #999; cursor: not-allowed; }
     
-    /* Payment Box Fix */
     .payment-amount-box { 
       background: linear-gradient(135deg, #FFFDF5 0%, #FFF6E0 100%);
       padding: 15px; border-radius: 16px; text-align: center; margin-bottom: 15px; 
@@ -263,7 +262,7 @@
       </div>
       <div class="trusted-by-card">
         <div class="trusted-by-avatars" id="trustedByAvatars"></div>
-        <div class="trusted-by-text">+9,935 buyers trust us</div>
+        <div class="trusted-by-text">+<span id="trustedByCount">9,935</span> buyers trust us</div>
       </div>
     </section>
 
@@ -271,8 +270,8 @@
       <h2>Why Trust Us?</h2>
       <p class="why-trust-sub">Thousands of gamers buy IDs here every day</p>
       <div class="trust-features">
-        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon1"></div><div class="tf-label">10,000+</div><div class="tf-value">Happy Gamers</div></div>
-        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon2"></div><div class="tf-label">5,000+</div><div class="tf-value">IDs Sold</div></div>
+        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon1"></div><div class="tf-label" id="whyTrustBuyers">10,000+</div><div class="tf-value">Happy Gamers</div></div>
+        <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon2"></div><div class="tf-label" id="heroSoldCount">0</div><div class="tf-value">IDs Sold</div></div>
         <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon3"></div><div class="tf-label">100%</div><div class="tf-value">Verified Accounts</div></div>
         <div class="trust-feature-card"><div class="tf-icon-wrap" id="tfIcon4"></div><div class="tf-label">100%</div><div class="tf-value">Secure Payment</div></div>
       </div>
@@ -424,7 +423,6 @@
     </div>
   </div>
 
-  <!-- PROFILE MODAL -->
   <div class="modal-overlay" id="profileOverlay">
     <div class="modal" style="max-width: 400px;">
       <button class="modal-close" onclick="closeModal('profileOverlay')">&times;</button>
@@ -527,6 +525,15 @@
       };
     })();
 
+    // --- REAL-TIME LOGIC SETUP ---
+    var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
+    var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
+    var BASE_PURCHASES_PER_HOUR = 5; // ID sales per hour base
+
+    function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+    function getHoursSinceReference() { return Math.max(0, Math.floor((Date.now() - REFERENCE_TIME) / 3600000)); }
+    function getTimeMultiplierForHour(hourOfDay) { if (hourOfDay < 6) return 0.2; if (hourOfDay < 12) return 0.6; if (hourOfDay < 17) return 0.9; if (hourOfDay < 23) return 1.3; return 0.5; }
+
     // --- CORE VARIABLES ---
     const fallbackData = [
       { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", images: ["1.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
@@ -540,9 +547,6 @@
     let selectedPhotoDataURL = null;
     let notifInterval = null;
 
-    var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
-    var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
-
     // --- INITIALIZATION ---
     window.onload = async () => {
       loadProfile();
@@ -552,13 +556,16 @@
       checkMusic();
       loadSavedReviews();
       renderReviews();
-      initViewerCounts();
       fetchDynamicAvatars();
       injectIcons();
       
+      // Real-time initializations
+      initViewerCounts();
+      renderHeroCounters();
+      
       setInterval(updateCountdowns, 1000);
       setInterval(fluctuateViewers, 5000);
-      setInterval(purchaseTick, 10000); 
+      setInterval(purchaseTick, 5000); 
       setInterval(updateNotificationTimes, 30000);
     };
 
@@ -706,7 +713,6 @@
       document.getElementById('successOverlay').style.display = 'flex';
       
       recordUserPurchase(currentAccount.id);
-      renderHeroCounters();
       triggerUserOwnNotification();
       spawnConfetti();
       playOrderSound();
@@ -894,21 +900,34 @@
       }
     }
 
+    // Real-Time Viewers Logic
     let viewerState = {};
     function initViewerCounts() {
       accountsData.forEach(d => {
-        viewerState[d.id] = { base: Math.floor(Math.random() * 200) + 150, current: 0 };
-        viewerState[d.id].current = viewerState[d.id].base;
+        var seed = 6001 + d.id.charCodeAt(0) * 131; var hours = getHoursSinceReference();
+        var hourOfDay = new Date().getHours(); var mult = getTimeMultiplierForHour(hourOfDay);
+        var base = Math.round((450 + pseudoRandom(seed) * 250) * 1.0 * mult);
+        base += Math.floor(pseudoRandom(seed + Math.floor(hours / 3)) * 100);
+        viewerState[d.id] = { base: base, current: base };
       });
     }
+    
     function fluctuateViewers() {
       accountsData.forEach(d => {
         let s = viewerState[d.id];
         if(!s) return;
         let delta = Math.floor(Math.random() * 5) - 2;
         s.current += delta;
+        let min = Math.max(5, Math.floor(s.base * 0.78)); let max = Math.ceil(s.base * 1.22);
+        if (s.current < min) s.current = min + Math.floor(Math.random() * 4);
+        if (s.current > max) s.current = max - Math.floor(Math.random() * 4);
+        
         let badge = document.querySelector(`.live-viewers-badge[data-design-id="${d.id}"] .vcount`);
-        if(badge) badge.textContent = s.current;
+        if(badge) { 
+            badge.textContent = s.current; 
+            badge.classList.add('bump');
+            setTimeout(() => badge.classList.remove('bump'), 260);
+        }
       });
     }
 
@@ -931,6 +950,29 @@
       { name: "Karan Mehta", city: "Jaipur", text: "ID buy karne ke baad maine apna account set kiya, sab kuch bina kisi problem ke ho gaya! Best seller 💯", acc: "Level 42 ID", av: "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/reviews/review6.png", helpful: 112, more: 4230, sellerReply: 'Thanks Karan! Aapka support humesha 🙏', time: '3 months ago' }
     ];
     let reviewsData = [];
+
+    function getReviewHelpful(review, idx) {
+      if (review.isUserSubmitted) return review.helpful || 0;
+      var hours = getHoursSinceReference(); var base = review.helpful || 0; var seed = 3001 + idx * 977 + (review.name ? review.name.charCodeAt(0) : 65) * 131; var dailyRate;
+      if (review.isYouTuber) { var popFactor = 1.0; if (review.name === 'Total Gaming') popFactor = 1.8; else if (review.name === 'Tonde Gamer') popFactor = 1.5; else if (review.name === 'Gyan Gaming') popFactor = 1.3; else if (review.name === 'Lokesh Gamer') popFactor = 1.1; dailyRate = (6 + pseudoRandom(seed) * 10) * popFactor; } else { dailyRate = 0.15 + pseudoRandom(seed) * 0.35; }
+      var hourlyRate = dailyRate / 24; var total = 0;
+      for (var h = 0; h < hours; h++) { var hourOfDay = new Date(REFERENCE_TIME + h * 3600000).getHours(); var mult = getTimeMultiplierForHour(hourOfDay); var r = pseudoRandom(seed + h * 9773); if (r < hourlyRate * mult) total += 1; }
+      return base + total;
+    }
+    function getReviewMore(review, idx) {
+      if (review.isUserSubmitted) return review.more || 0;
+      var hours = getHoursSinceReference(); var base = review.more || 0; var seed = 3001 + idx * 977 + (review.name ? review.name.charCodeAt(0) : 65) * 131 + 17; var dailyRate;
+      if (review.isYouTuber) { var popFactor = 1.0; if (review.name === 'Total Gaming') popFactor = 1.8; else if (review.name === 'Tonde Gamer') popFactor = 1.5; else if (review.name === 'Gyan Gaming') popFactor = 1.3; else if (review.name === 'Lokesh Gamer') popFactor = 1.1; dailyRate = (20 + pseudoRandom(seed) * 30) * popFactor; } else { dailyRate = 1 + pseudoRandom(seed) * 3; }
+      var hourlyRate = dailyRate / 24; var total = 0;
+      for (var h = 0; h < hours; h++) { var r = pseudoRandom(seed + h * 9773); if (r < hourlyRate) total += 1; }
+      return base + total;
+    }
+    function getReviewsCount() {
+      var base = 7865; var hours = getHoursSinceReference(); var total = 0;
+      for (var h = 0; h < hours; h++) { var r = pseudoRandom(5555 + h * 9773); if (r < 2.5 / 24) total += 1; }
+      var userCount = reviewsData.filter(function(r) { return r.isUserSubmitted; }).length;
+      return base + total + userCount;
+    }
 
     function loadSavedReviews() {
       let saved = localStorage.getItem(USER_REVIEWS_KEY);
@@ -971,7 +1013,7 @@
 
         let key = r.name + r.text;
         let isHelpful = helpfulStates[key] ? true : false;
-        let baseCount = r.helpful || 0;
+        let baseCount = getReviewHelpful(r, idx);
         let displayCount = isHelpful ? baseCount + 1 : baseCount;
 
         card.innerHTML = `
@@ -982,32 +1024,30 @@
           <div class="review-purchased">${ICONS.diamond} Bought <strong>${r.acc}</strong></div>
           <div class="review-text">"${r.text}"</div>
           <div class="review-actions">
-            <button class="review-helpful ${isHelpful ? 'active' : ''}" onclick="toggleHelpful(this, '${key}', ${baseCount})"><span class="helpful-icon">${ICONS.thumbUp}</span> Helpful <span class="helpful-count">${displayCount.toLocaleString('en-IN')}</span></button>
-            <button class="review-more-btn" onclick="showMoreStats(${r.more})">More <span class="more-count">+${r.more.toLocaleString('en-IN')}</span></button>
+            <button class="review-helpful ${isHelpful ? 'active' : ''}" onclick="toggleHelpful(this, '${key}')"><span class="helpful-icon">${ICONS.thumbUp}</span> Helpful <span class="helpful-count">${displayCount.toLocaleString('en-IN')}</span></button>
+            <button class="review-more-btn" onclick="showMoreStats(${getReviewMore(r, idx)})">More <span class="more-count">+${getReviewMore(r, idx).toLocaleString('en-IN')}</span></button>
           </div>
           ${r.sellerReply ? `<div class="review-seller-reply"><strong>SELLER REPLY</strong>${r.sellerReply}</div>` : ''}
         `;
         reviewsGrid.appendChild(card);
       });
       applyImageBlur();
+      
+      var newCount = getReviewsCount();
+      var lmt = document.getElementById('loadMoreBtn'); 
+      if(lmt) lmt.textContent = "More + " + newCount.toLocaleString('en-IN') + " Reviews";
     }
 
-    function toggleHelpful(btn, key, baseCount) {
-      let isActive = btn.classList.contains('active');
-      let countSpan = btn.querySelector('.helpful-count');
+    function toggleHelpful(btn, key) {
       let states = loadHelpfulStates();
-      
-      if(isActive) {
-        btn.classList.remove('active');
-        countSpan.textContent = baseCount.toLocaleString('en-IN');
+      if(states[key]) {
         delete states[key];
       } else {
-        btn.classList.add('active');
-        countSpan.textContent = (baseCount + 1).toLocaleString('en-IN');
         states[key] = true;
         showToast('Thanks for your feedback!', 'success');
       }
       saveHelpfulStates(states);
+      renderReviews(); // Re-render to apply correct count based on real-time + user state
     }
 
     function showMoreStats(count) {
@@ -1121,7 +1161,8 @@
     document.getElementById('loadMoreBtn').onclick = function() {
       this.textContent = "Loading...";
       setTimeout(() => {
-        this.textContent = "Load More Reviews"; 
+        var newNumber = getReviewsCount();
+        this.textContent = "More + " + newNumber.toLocaleString('en-IN') + " Reviews"; 
         var scenarioIndex = clickCount % errorScenarios.length; var scenario = errorScenarios[scenarioIndex]; clickCount++;
         showNetworkError(scenario);
       }, 1500);
@@ -1136,35 +1177,133 @@
     }
 
     // --- LIVE FEED & NOTIFICATIONS ---
-    function startLiveFeed() {
-      const list = document.getElementById('pulseList');
-      for(let i=0; i<3; i++) addPulseItem(list, false);
-      notifInterval = setInterval(() => {
-        addPulseItem(list, true);
-        if(Math.random() > 0.5) showLiveNotification(); 
-      }, 60000); 
+    var _lastNotifiedMinute = null;
+    var surnames = ['Sharma', 'Verma', 'Yadav', 'Patel', 'Khan', 'Singh', 'Gupta', 'Agarwal', 'Jain', 'Mehta', 'Shah', 'Reddy', 'Nair', 'Iyer', 'Rao', 'Kumar', 'Chauhan', 'Rathore', 'Mishra', 'Tiwari', 'Pandey', 'Joshi', 'Desai', 'Kapoor', 'Malhotra', 'Chopra', 'Sinha', 'Bose', 'Das', 'Roy', 'Thakur', 'Kaur', 'Saxena', 'Bansal', 'Garg', 'Ahuja', 'Khanna', 'Bhatia', 'Sethi', 'Dutta'];
+    
+    var _streamState = null;
+    function getStreamState() { 
+      if (_streamState === null) { 
+        _streamState = { events: [], totalPurchases: 0, cardCounts: {}, lastMinute: -1 }; 
+        accountsData.forEach(function(d) { _streamState.cardCounts[d.id] = 0; }); 
+      } 
+      return _streamState; 
+    }
+    
+    function extendStreamTo(targetMinute) {
+      var stream = getStreamState();
+      if (targetMinute <= stream.lastMinute) return stream;
+      var totalWeight = 0; accountsData.forEach(function(d) { totalWeight += 1; }); // equal weight
+      for (var m = stream.lastMinute + 1; m <= targetMinute; m++) {
+        var minuteTime = GLOBAL_STREAM_REFERENCE_TIME + m * 60000;
+        var hourOfDay = new Date(minuteTime).getHours();
+        var mult = getTimeMultiplierForHour(hourOfDay);
+        var expectedPerMinute = (BASE_PURCHASES_PER_HOUR * mult) / 60;
+        var r1 = pseudoRandom(7001 + m * 9773);
+        if (r1 < expectedPerMinute) {
+          var cardRoll = pseudoRandom(7001 + m * 9773 + 4337) * totalWeight;
+          var chosen = accountsData[0]; var acc = 0;
+          for (var i = 0; i < accountsData.length; i++) { acc += 1; if (cardRoll < acc) { chosen = accountsData[i]; break; } }
+          stream.events.push({ minute: m, time: minuteTime, designId: chosen.id }); stream.totalPurchases++; stream.cardCounts[chosen.id]++;
+        }
+      }
+      stream.lastMinute = targetMinute; return stream;
+    }
+    
+    function getTotalPurchases() { var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000); extendStreamTo(nowMinute); return _streamState.totalPurchases; }
+    function recordUserPurchase(designId) {
+      var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000); extendStreamTo(nowMinute);
+      var stream = _streamState;
+      stream.events.push({ minute: nowMinute, time: Date.now(), designId: designId, isUser: true }); stream.totalPurchases++; stream.cardCounts[designId] = (stream.cardCounts[designId] || 0) + 1;
+      renderHeroCounters();
     }
 
-    function addPulseItem(container, animate) {
-      const name = firstNames[Math.floor(Math.random()*firstNames.length)];
-      const city = cities[Math.floor(Math.random()*cities.length)];
-      const av = dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback;
-      const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
-      if(!acc) return;
+    function generatePulseBuyer(minuteSeed) {
+      var fnIndex = Math.floor(pseudoRandom(minuteSeed * 997 + 1) * firstNames.length);
+      var lnIndex = Math.floor(pseudoRandom(minuteSeed * 991 + 2) * surnames.length);
+      var cityIndex = Math.floor(pseudoRandom(minuteSeed * 983 + 3) * cities.length);
+      var fn = firstNames[fnIndex]; var ln = surnames[lnIndex]; var city = cities[cityIndex];
+      var fullName = fn + ' ' + ln;
+      return { name: fullName, city: city, avatar: dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback };
+    }
 
-      const div = document.createElement('div');
-      div.className = 'pulse-item';
-      div.innerHTML = `
-        <div class="pulse-avatar"><img src="${av}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
-        <div class="pulse-content">
-          <div class="pulse-header-row">${name} <span style="font-size:10px; color:#666; font-weight:500;">from ${city}</span></div>
-          <div class="pulse-action-row">just bought <span class="card-name">${acc.title}</span></div>
-        </div>
-      `;
-      if(animate) container.insertBefore(div, container.firstChild);
-      else container.appendChild(div);
-      if(container.children.length > 3) container.removeChild(container.lastChild);
+    function createPulseItemHTML(buyer, acc, timestamp) {
+      var timeStr = formatTimeAgo(timestamp); 
+      var cityText = buyer.city ? ('from ' + buyer.city) : ''; 
+      var priceShown = acc.price;
+      var chestSrc = acc.mainImage;
+      
+      var avatarHTML = '';
+      if (buyer.avatar) {
+        avatarHTML = `<div class="pulse-avatar-wrap"><div class="pulse-avatar"><img class="img-blur" src="${buyer.avatar}" alt="${buyer.name || 'Buyer'}"></div><div class="pulse-check">✓</div></div>`;
+      } else if (buyer.name) {
+        avatarHTML = `<div class="pulse-avatar-wrap"><div class="pulse-avatar"><img class="img-blur" src="${avatarFallback}" alt="${buyer.name}"></div><div class="pulse-check">✓</div></div>`;
+      }
+      
+      var headerHTML = '';
+      if (buyer.name || buyer.city) {
+        headerHTML = `<div class="pulse-header-row"><strong>${buyer.name}</strong> <span class="pulse-city">${cityText}</span></div>`;
+      }
+      
+      return `<div class="pulse-item" data-timestamp="${timestamp}">` + 
+        avatarHTML + 
+        `<div class="pulse-content">` + 
+          headerHTML + 
+          `<div class="pulse-action-row">just bought <span class="card-name">${acc.title}</span></div>` + 
+          `<div class="pulse-meta-row"><span class="pulse-price">₹${acc.price}</span> <span class="dot">•</span> <span class="pulse-time-text">${timeStr}</span></div>` + 
+        `</div>` + 
+        `<div class="pulse-card-thumb"><img class="img-blur" src="${chestSrc}" alt="" onerror="this.style.display='none'"></div>` + 
+      `</div>`;
+    }
+
+    function addPulseItem(buyer, acc, timestamp, isNew) {
+      var list = document.getElementById('pulseList'); if (!list) return;
+      var itemHTML = createPulseItemHTML(buyer, acc, timestamp);
+      list.insertAdjacentHTML('afterbegin', itemHTML);
+      if (isNew) { var firstItem = list.firstElementChild; if (firstItem) firstItem.classList.add('new-pulse'); }
+      while (list.children.length > 3) list.removeChild(list.lastElementChild);
       applyImageBlur();
+    }
+
+    function populateInitialPulse() {
+      var nowMinute = Math.floor((Date.now() - GLOBAL_STREAM_REFERENCE_TIME) / 60000);
+      extendStreamTo(nowMinute);
+      var stream = _streamState;
+      var recentEvents = stream.events.filter(function(ev) { return !ev.isUser; }).slice(-3);
+      recentEvents.forEach(function(ev) {
+        var acc = accountsData.find(a => a.id === ev.designId);
+        if (!acc) return;
+        var buyer = generatePulseBuyer(ev.minute);
+        var timestamp = GLOBAL_STREAM_REFERENCE_TIME + ev.minute * 60000;
+        addPulseItem(buyer, acc, timestamp, false);
+      });
+    }
+
+    function startLiveFeed() {
+      populateInitialPulse();
+      // Start the ticker to check for new events
+      notifInterval = setInterval(purchaseTick, 5000);
+    }
+
+    function purchaseTick() {
+      var now = Date.now(); var currentMinute = Math.floor((now - GLOBAL_STREAM_REFERENCE_TIME) / 60000);
+      if (_lastNotifiedMinute === null) { _lastNotifiedMinute = currentMinute - 1; }
+      if (currentMinute <= _lastNotifiedMinute) return;
+      
+      var stream = extendStreamTo(currentMinute); var shownAny = false;
+      for (var i = 0; i < stream.events.length; i++) {
+        var ev = stream.events[i]; if (ev.isUser) continue;
+        if (ev.minute > _lastNotifiedMinute && ev.minute <= currentMinute) {
+          var acc = accountsData.find(a => a.id === ev.designId);
+          if (!acc) continue;
+          var buyer = generatePulseBuyer(ev.minute);
+          var timestamp = Date.now(); 
+          showLiveNotificationFor(buyer, acc, timestamp); 
+          addPulseItem(buyer, acc, timestamp, true); 
+          shownAny = true;
+        }
+      }
+      _lastNotifiedMinute = currentMinute;
+      if (shownAny) { renderHeroCounters(); }
     }
 
     function makeSwipeDismissable(el) {
@@ -1196,25 +1335,15 @@
       });
     }
 
-    function showLiveNotification() {
+    function showLiveNotificationFor(buyer, acc, timestamp) {
       const cont = document.getElementById('liveNotifContainer');
-      const name = firstNames[Math.floor(Math.random()*firstNames.length)];
-      const acc = accountsData[Math.floor(Math.random()*accountsData.length)];
-      if(!acc) return;
-      const av = dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback;
-      
       const notif = document.createElement('div');
       notif.className = 'live-notif';
-      notif.style.position = 'relative';
       notif.innerHTML = `
         <div class="notif-card-badge">🛒 ID SALE <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
         <div class="notif-row">
-          <div class="notif-avatar"><img src="${av}" onerror="this.src='${avatarFallback}'"></div>
-          <div class="notif-content">
-            <strong>${name}</strong> just bought <br>
-            <span style="color:#FF0000; font-weight:700;">${acc.title}</span>
-            <div style="font-size:11px; color:#0CFF00; font-weight:800; margin-top:2px; text-shadow:0 1px 0 #000;">for ₹${acc.price}</div>
-          </div>
+          <div class="notif-avatar"><img src="${buyer.avatar || avatarFallback}" onerror="this.src='${avatarFallback}'"></div>
+          <div class="notif-content"><strong>${buyer.name || 'You'}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span><div style="font-size:11px; color:#0CFF00; font-weight:800; margin-top:2px; text-shadow:0 1px 0 #000;">for ₹${acc.price}</div></div>
           <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.style.display='none'"></div>
         </div>
       `;
@@ -1259,42 +1388,73 @@
       };
       var timestamp = Date.now();
       
-      const list = document.getElementById('pulseList');
-      const div = document.createElement('div');
-      div.className = 'pulse-item';
-      div.innerHTML = `
-        <div class="pulse-avatar"><img src="${buyer.avatar || avatarFallback}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
-        <div class="pulse-content">
-          <div class="pulse-header-row">${buyer.name || 'You'} <span style="font-size:10px; color:#666; font-weight:500;">from ${buyer.city || 'Your City'}</span></div>
-          <div class="pulse-action-row">just bought <span class="card-name">${acc.title}</span></div>
-        </div>
-      `;
-      list.insertBefore(div, list.firstChild);
-      if(list.children.length > 3) list.removeChild(list.lastChild);
-
       showLiveNotificationFor(buyer, acc, timestamp);
-    }
-
-    function showLiveNotificationFor(buyer, acc, timestamp) {
-      const cont = document.getElementById('liveNotifContainer');
-      const notif = document.createElement('div');
-      notif.className = 'live-notif';
-      notif.innerHTML = `
-        <div class="notif-card-badge">🛒 ID SALE <button class="notif-close-btn" onclick="this.closest('.live-notif').remove()">×</button></div>
-        <div class="notif-row">
-          <div class="notif-avatar"><img src="${buyer.avatar || avatarFallback}" onerror="this.src='${avatarFallback}'"></div>
-          <div class="notif-content"><strong>${buyer.name || 'You'}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span></div>
-          <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.style.display='none'"></div>
-        </div>
-      `;
-      cont.appendChild(notif);
-      makeSwipeDismissable(notif);
-      setTimeout(() => { notif.remove(); }, 10000);
-      applyImageBlur();
     }
 
     function hasAnyProfileDetail() {
       return !!(localStorage.getItem('ff_profile_name') || localStorage.getItem('ff_profile_city') || localStorage.getItem('ff_profile_photo'));
+    }
+
+    // --- HERO COUNTERS (Real Time) ---
+    var isFirstRender = true;
+    function animateValue(obj, start, end, duration) {
+        if (start === end) return;
+        var range = end - start;
+        var current = start;
+        var increment = end > start ? 1 : -1;
+        var stepTime = Math.abs(Math.floor(duration / range));
+        if (stepTime < 15) stepTime = 15;
+        var timer = setInterval(function() {
+            current += increment;
+            obj.textContent = current.toLocaleString('en-IN') + '+';
+            if (current == end) {
+                clearInterval(timer);
+            }
+        }, stepTime);
+    }
+
+    function renderHeroCounters() {
+      var totalPurchases = getTotalPurchases();
+      var sold = 5000 + totalPurchases;
+      var buyers = 9935 + Math.floor(totalPurchases * 0.8);
+
+      var soldEl = document.getElementById('heroSoldCount');
+      if (soldEl) {
+          if (isFirstRender) {
+              soldEl.textContent = sold.toLocaleString('en-IN') + '+';
+          } else {
+              var currentSold = parseInt(soldEl.textContent.replace(/[^0-9]/g, '')) || 5000;
+              if (currentSold !== sold) {
+                  animateValue(soldEl, currentSold, sold, 1200);
+              }
+          }
+      }
+
+      var buyersEl = document.getElementById('whyTrustBuyers');
+      if (buyersEl) {
+          if (isFirstRender) {
+              buyersEl.textContent = buyers.toLocaleString('en-IN') + '+';
+          } else {
+              var currentBuyers = parseInt(buyersEl.textContent.replace(/[^0-9]/g, '')) || 9935;
+              if (currentBuyers !== buyers) {
+                  animateValue(buyersEl, currentBuyers, buyers, 1200);
+              }
+          }
+      }
+
+      var tbEl = document.getElementById('trustedByCount');
+      if (tbEl) {
+          if (isFirstRender) {
+              tbEl.textContent = buyers.toLocaleString('en-IN');
+          } else {
+              var currentTb = parseInt(tbEl.textContent.replace(/[^0-9]/g, '')) || 9935;
+              if (currentTb !== buyers) {
+                  tbEl.textContent = buyers.toLocaleString('en-IN');
+              }
+          }
+      }
+
+      isFirstRender = false;
     }
 
     // --- UTILS & HELPERS ---
@@ -1385,17 +1545,6 @@
       });
     }
 
-    function generatePulseBuyer(minuteSeed) {
-      var fnIndex = Math.floor(pseudoRandom(minuteSeed * 997 + 1) * firstNames.length);
-      var lnIndex = Math.floor(pseudoRandom(minuteSeed * 991 + 2) * surnames.length);
-      var cityIndex = Math.floor(pseudoRandom(minuteSeed * 983 + 3) * cities.length);
-      var fn = firstNames[fnIndex]; var ln = surnames[lnIndex]; var city = cities[cityIndex];
-      var fullName = fn + ' ' + ln;
-      return { name: fullName, city: city, avatar: dynamicAvatars.length > 0 ? dynamicAvatars[Math.floor(Math.random()*dynamicAvatars.length)] : avatarFallback };
-    }
-    var surnames = ['Sharma', 'Verma', 'Yadav', 'Patel', 'Khan', 'Singh', 'Gupta', 'Agarwal', 'Jain', 'Mehta', 'Shah', 'Reddy', 'Nair', 'Iyer', 'Rao', 'Kumar', 'Chauhan', 'Rathore', 'Mishra', 'Tiwari', 'Pandey', 'Joshi', 'Desai', 'Kapoor', 'Malhotra', 'Chopra', 'Sinha', 'Bose', 'Das', 'Roy', 'Thakur', 'Kaur', 'Saxena', 'Bansal', 'Garg', 'Ahuja', 'Khanna', 'Bhatia', 'Sethi', 'Dutta'];
-    
-    function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
     function formatTimeAgo(timestamp) {
       var diffMs = Date.now() - timestamp; var diffSec = Math.floor(diffMs / 1000);
       if (diffSec < 60) return 'Just now';
@@ -1419,8 +1568,6 @@
 
     function initCountdowns() { /* Not used for ID store, but kept for structure if needed */ }
     function updateCountdowns() { /* Not used for ID store */ }
-    function renderHeroCounters() { /* Not used in ID store layout */ }
-    function purchaseTick() { /* Replaced by notifInterval for simplicity */ }
 
   </script>
 </body>
