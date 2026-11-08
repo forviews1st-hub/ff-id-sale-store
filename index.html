@@ -60,33 +60,40 @@
     .trust-features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     @media (min-width: 700px) { .trust-features { grid-template-columns: repeat(4, 1fr); } }
     .trust-feature-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 16px 8px; background: #FFFFFF; border: 2px solid #E5E7EB; border-radius: 22px; box-shadow: 0 4px 0 #D1D5DB; }
-    .tf-icon-wrap { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 0 #C77A00; background: var(--deep-yellow-grad); }
+    .tf-icon-wrap { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 0 #C77A00; }
+    
+    /* Alternating Colors Fix */
+    .trust-feature-card:nth-child(1) .tf-icon-wrap, .trust-feature-card:nth-child(3) .tf-icon-wrap { background: var(--deep-yellow-grad); }
+    .trust-feature-card:nth-child(2) .tf-icon-wrap, .trust-feature-card:nth-child(4) .tf-icon-wrap { background: var(--green-grad); }
+    
     .tf-label { font-size: 18px; font-weight: 800; color: #1A1A1A; }
     .tf-value { font-size: 9px; color: #4A4A4A; letter-spacing: 0.7px; font-weight: 700; text-transform: uppercase; }
-
-    /* NEW LIVE FEED DESIGN */
-    .pulse-feed { margin: 0 0 20px; padding: 18px; background: linear-gradient(160deg, #FF0000 0%, #CC0000 100%); border: 2px solid rgba(255,255,255,0.4); border-radius: 28px; box-shadow: 0 8px 0 #800000; }
-    .pulse-header { display: flex; justify-content: space-between; margin-bottom: 14px; }
-    .live-pill { display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px; border-radius: 100px; background: #FFFFFF; color: #FF0000; font-size: 10.5px; font-weight: 800; box-shadow: 0 3px 0 #800000; }
-    .pulse-subtitle { font-size: 12px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; }
-    .pulse-list { display: flex; flex-direction: column; gap: 10px; }
     
-    .pulse-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 0 rgba(255,0,0,0.2); animation: popIn 0.5s ease; border-left: 5px solid #0CFF00; }
-    .pulse-avatar { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; background: #FDEEC8; border: 2px solid #FFC107; flex-shrink: 0; }
+    /* NEW LIVE FEED DESIGN (Compact & Readable) */
+    .pulse-feed { margin: 0 0 20px; padding: 16px; background: linear-gradient(160deg, #FF0000 0%, #CC0000 100%); border: 2px solid rgba(255,255,255,0.4); border-radius: 24px; box-shadow: 0 8px 0 #800000; }
+    .pulse-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .live-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 100px; background: #FFFFFF; color: #FF0000; font-size: 10px; font-weight: 800; box-shadow: 0 3px 0 #800000; }
+    .pulse-subtitle { font-size: 11px; font-weight: 800; color: #FFFFFF; text-transform: uppercase; }
+    .pulse-list { display: flex; flex-direction: column; gap: 8px; }
+    
+    .pulse-item { 
+        display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; 
+        background: #FFFFFF; box-shadow: 0 2px 6px rgba(0,0,0,0.15); 
+        animation: popIn 0.3s ease; border-left: 4px solid #0CFF00; 
+    }
+    .pulse-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: #FDEEC8; flex-shrink: 0; }
     .pulse-avatar img { width: 100%; height: 100%; object-fit: cover; }
     
-    .pulse-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-    .pulse-header-row { font-size: 13.5px; color: #1A1A1A; font-weight: 800; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-    .pulse-header-row span { font-size: 11px; color: #666; font-weight: 500; }
+    .pulse-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .pulse-header-row { font-size: 12px; color: #1A1A1A; font-weight: 800; display: flex; align-items: center; gap: 4px; }
+    .pulse-header-row span { font-size: 10px; color: #777; font-weight: 500; }
+    .pulse-action-row { font-size: 11px; color: #444; font-weight: 500; }
+    .pulse-action-row .card-name { color: #FF0000; font-weight: 800; }
+    .pulse-meta-row { display: flex; align-items: center; gap: 5px; font-size: 10px; margin-top: 2px; }
+    .pulse-price { background: var(--green-grad); color: #1A1A1A; padding: 2px 6px; border-radius: 4px; font-weight: 900; box-shadow: 0 1px 0 #076B00; }
+    .pulse-time-text { color: #888; }
     
-    .pulse-action-row { font-size: 12px; color: #4A4A4A; font-weight: 500; margin-bottom: 2px; }
-    .pulse-action-row .card-name { color: #FF0000; font-weight: 800; font-size: 13px; }
-    
-    .pulse-meta-row { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 2px; }
-    .pulse-price { background: var(--green-grad); color: #1A1A1A; padding: 2px 8px; border-radius: 6px; font-weight: 900; font-size: 12px; box-shadow: 0 2px 0 #076B00; }
-    .pulse-time-text { color: #8B7D65; font-weight: 600; }
-    
-    .pulse-card-thumb { width: 48px; height: 48px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #FFF; border: 2px solid #E5E7EB; padding: 2px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .pulse-card-thumb { width: 40px; height: 40px; border-radius: 6px; flex-shrink: 0; background: #FFF; border: 1px solid #E5E7EB; padding: 2px; overflow: hidden; }
     .pulse-card-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
 
     /* HEADING ROW */
@@ -516,6 +523,7 @@
       trophy: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icTrophyA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M6 3H18V6C18 10 15.5 13 12 13C8.5 13 6 10 6 6Z" fill="url(#icTrophyA)"/><path d="M6 5H3V7C3 8.5 4 9.5 6 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M18 5H21V7C21 8.5 20 9.5 18 9.5" stroke="#E6A100" stroke-width="1.8" fill="none" stroke-linecap="round"/><rect x="10.5" y="13" width="3" height="4" fill="#E6A100"/><rect x="8" y="17" width="8" height="2.5" rx="0.8" fill="url(#icTrophyA)"/><rect x="7" y="19.5" width="10" height="1.8" rx="0.9" fill="#B36A00"/><ellipse cx="10" cy="5.5" rx="1.2" ry="0.8" fill="#FFFFFF" opacity="0.6"/></svg>',
       check: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icCheck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DFF9E"/><stop offset="1" stop-color="#00B248"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#icCheck)"/><path d="M7 12.2L10.5 15.5L17 9" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="9" r="2.5" fill="#FFFFFF" opacity="0.25"/></svg>',
       lock: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icLockA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M7 10V7C7 4.5 9 3 12 3C15 3 17 4.5 17 7V10" stroke="#B36A00" stroke-width="2.2" fill="none" stroke-linecap="round"/><rect x="4.5" y="10" width="15" height="11" rx="2" fill="url(#icLockA)"/><circle cx="12" cy="15" r="1.7" fill="#8B5A00"/><rect x="11.2" y="15" width="1.6" height="3.5" rx="0.8" fill="#8B5A00"/><ellipse cx="9" cy="12.5" rx="2" ry="1" fill="#FFFFFF" opacity="0.4"/></svg>',
+      diamond: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icDia" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8FF"/><stop offset="1" stop-color="#0066CC"/></linearGradient></defs><path d="M12 2L4 9L12 22L20 9L12 2Z" fill="url(#icDia)"/><path d="M12 2L8 9L12 22" fill="#FFFFFF" opacity="0.35"/><path d="M4 9H20" stroke="#FFFFFF" stroke-width="0.8" opacity="0.6"/><path d="M8 9L12 2L16 9" fill="none" stroke="#FFFFFF" stroke-width="0.8" opacity="0.7"/><path d="M9 5L10.5 7.5" stroke="#FFFFFF" stroke-width="0.7" opacity="0.8"/></svg>',
       thumbUp: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icThumb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE066"/><stop offset="1" stop-color="#E6A100"/></linearGradient></defs><path d="M3 21H6V10H3V21ZM21 11C21 9.9 20.1 9 19 9H14L15.5 3.5C15.5 3.3 15.5 3.1 15.4 2.9L14.4 2L8.4 8C8.1 8.3 8 8.6 8 9V19C8 20.1 8.9 21 10 21H18C18.8 21 19.5 20.5 19.8 19.8L22 12.8C22 12.5 22 12.3 22 12V11H21Z" fill="url(#icThumb)"/><ellipse cx="11" cy="6" rx="2" ry="1.2" fill="#FFFFFF" opacity="0.4"/></svg>',
       pin: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icPin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF5555"/><stop offset="1" stop-color="#AA0000"/></linearGradient></defs><path d="M12 2C7.6 2 4 5.6 4 10C4 16 12 22 12 22C12 22 20 16 20 10C20 5.6 16.4 2 12 2Z" fill="url(#icPin)"/><circle cx="12" cy="10" r="3.2" fill="#FFFFFF"/><circle cx="11" cy="9" r="1" fill="#AA0000" opacity="0.5"/></svg>',
       clock: '<svg class="icon-3d" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="icClock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5FD8FF"/><stop offset="1" stop-color="#0066CC"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#icClock)"/><circle cx="12" cy="12" r="8.5" fill="#FFFFFF" opacity="0.15"/><path d="M12 6V12L16 14" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1" fill="#FFFFFF"/></svg>',
@@ -539,7 +547,7 @@
     // --- REAL-TIME LOGIC SETUP ---
     var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
     var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
-    var BASE_PURCHASES_PER_HOUR = 15; // Increased for more active feel
+    var BASE_PURCHASES_PER_HOUR = 15;
 
     function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
     function getHoursSinceReference() { return Math.max(0, Math.floor((Date.now() - REFERENCE_TIME) / 3600000)); }
@@ -572,12 +580,11 @@
       initViewerCounts();
       renderHeroCounters();
       
-      // Set intervals for real-time updates
       setInterval(updateCountdowns, 1000);
       setInterval(fluctuateViewers, 5000);
-      setInterval(purchaseTick, 5000); // Check every 5s for new fake purchases
+      setInterval(purchaseTick, 5000); 
       setInterval(updateNotificationTimes, 30000);
-      setInterval(renderReviews, 60000); // Re-render reviews every minute to update counts
+      setInterval(renderReviews, 60000); // Update counts every minute
     };
 
     // --- MAIN DATA LOADING ---
@@ -966,14 +973,14 @@
       let base = review.helpful || 0;
       let startTime = review.submittedAt || REFERENCE_TIME;
       let minutesPassed = Math.max(0, (Date.now() - startTime) / 60000);
-      let ratePerMinute = review.isYouTuber ? 0.05 : 0.01; // YouTubers get 0.05 helpfuls per min, normal 0.01
+      let ratePerMinute = review.isYouTuber ? 0.05 : 0.01;
       return base + Math.floor(minutesPassed * ratePerMinute);
     }
     function getReviewMore(review, idx) {
       let base = review.more || 0;
       let startTime = review.submittedAt || REFERENCE_TIME;
       let minutesPassed = Math.max(0, (Date.now() - startTime) / 60000);
-      let ratePerMinute = review.isYouTuber ? 0.2 : 0.05; // YouTubers get 0.2 more per min, normal 0.05
+      let ratePerMinute = review.isYouTuber ? 0.2 : 0.05;
       return base + Math.floor(minutesPassed * ratePerMinute);
     }
     function getReviewsCount() {
@@ -1031,7 +1038,7 @@
             <div class="review-avatar"><img src="${r.av}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${avatarFallback}'"></div>
             <div class="review-info">${nameHtml}<div class="review-meta">${ICONS.pin} ${r.city} · ${ICONS.clock} ${r.time || 'Just now'}</div></div>
           </div>
-          <div class="review-purchased">${ICONS.diamond} Bought <strong>${r.acc}</strong></div>
+          <div class="review-purchased">${ICONS.diamond} Bought <strong>${r.acc || 'ID'}</strong></div>
           <div class="review-text">"${r.text}"</div>
           <div class="review-actions">
             <button class="review-helpful ${isHelpful ? 'active' : ''}" onclick="toggleHelpful(this, '${key}')"><span class="helpful-icon">${ICONS.thumbUp}</span> Helpful <span class="helpful-count">${displayCount.toLocaleString('en-IN')}</span></button>
@@ -1202,7 +1209,7 @@
     function extendStreamTo(targetMinute) {
       var stream = getStreamState();
       if (targetMinute <= stream.lastMinute) return stream;
-      var totalWeight = 0; accountsData.forEach(function(d) { totalWeight += 1; }); // equal weight
+      var totalWeight = 0; accountsData.forEach(function(d) { totalWeight += 1; });
       for (var m = stream.lastMinute + 1; m <= targetMinute; m++) {
         var minuteTime = GLOBAL_STREAM_REFERENCE_TIME + m * 60000;
         var hourOfDay = new Date(minuteTime).getHours();
@@ -1240,28 +1247,18 @@
       var timeStr = formatTimeAgo(timestamp); 
       var cityText = buyer.city ? ('from ' + buyer.city) : ''; 
       var priceShown = acc.price;
-      var chestSrc = acc.mainImage;
+      var imgSrc = acc.mainImage || avatarFallback;
       
-      var avatarHTML = '';
-      if (buyer.avatar) {
-        avatarHTML = `<div class="pulse-avatar"><img class="img-blur" src="${buyer.avatar}" alt="${buyer.name || 'Buyer'}" onerror="this.src='${avatarFallback}'"></div>`;
-      } else if (buyer.name) {
-        avatarHTML = `<div class="pulse-avatar"><img class="img-blur" src="${avatarFallback}" alt="${buyer.name}"></div>`;
-      }
-      
-      var headerHTML = '';
-      if (buyer.name || buyer.city) {
-        headerHTML = `<div class="pulse-header-row"><strong>${buyer.name}</strong> <span>${cityText}</span></div>`;
-      }
+      var avatarHTML = `<div class="pulse-avatar"><img class="img-blur" src="${buyer.avatar || avatarFallback}" alt="${buyer.name}" onerror="this.src='${avatarFallback}'"></div>`;
       
       return `<div class="pulse-item" data-timestamp="${timestamp}">` + 
         avatarHTML + 
         `<div class="pulse-content">` + 
-          headerHTML + 
+          `<div class="pulse-header-row">${buyer.name} <span>${cityText}</span></div>` + 
           `<div class="pulse-action-row">Purchased <span class="card-name">${acc.title}</span></div>` + 
-          `<div class="pulse-meta-row"><span class="pulse-price">₹${acc.price}</span> <span class="dot">•</span> <span class="pulse-time-text">${timeStr}</span></div>` + 
+          `<div class="pulse-meta-row"><span class="pulse-price">₹${priceShown}</span> <span class="dot">•</span> <span class="pulse-time-text">${timeStr}</span></div>` + 
         `</div>` + 
-        `<div class="pulse-card-thumb"><img class="img-blur" src="${chestSrc}" alt="" onerror="this.style.display='none'"></div>` + 
+        `<div class="pulse-card-thumb"><img class="img-blur" src="${imgSrc}" alt="" onerror="this.src='${avatarFallback}'"></div>` + 
       `</div>`;
     }
 
@@ -1290,7 +1287,6 @@
 
     function startLiveFeed() {
       populateInitialPulse();
-      // Start the ticker to check for new events
       setInterval(purchaseTick, 5000);
     }
 
