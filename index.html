@@ -69,7 +69,7 @@
     .tf-label { font-size: 18px; font-weight: 800; color: #1A1A1A; }
     .tf-value { font-size: 9px; color: #4A4A4A; letter-spacing: 0.7px; font-weight: 700; text-transform: uppercase; }
     
-    /* NEW LIVE FEED DESIGN (Compact & Readable) */
+    /* NEW LIVE FEED DESIGN */
     .pulse-feed { margin: 0 0 20px; padding: 16px; background: linear-gradient(160deg, #FF0000 0%, #CC0000 100%); border: 2px solid rgba(255,255,255,0.4); border-radius: 24px; box-shadow: 0 8px 0 #800000; }
     .pulse-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
     .live-pill { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 100px; background: #FFFFFF; color: #FF0000; font-size: 10px; font-weight: 800; box-shadow: 0 3px 0 #800000; }
@@ -181,8 +181,8 @@
     .modal-body { padding: 24px 20px; }
     
     /* GALLERY SLIDER */
-    .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; }
-    .gallery-container img { width: 100%; height: 100%; object-fit: contain; }
+    .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; touch-action: pan-y; }
+    .gallery-container img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
     .gallery-thumbs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
     .gallery-thumbs img { width: 60px; height: 40px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: 0.2s; }
     .gallery-thumbs img:hover { opacity: 1; }
@@ -335,7 +335,9 @@
     <div class="modal">
       <button class="modal-close" onclick="closeModal('detailsOverlay')">&times;</button>
       <div class="modal-body">
-        <div class="gallery-container"><img id="mainGalleryImg" src=""></div>
+        <div class="gallery-container" id="galleryContainer">
+            <img id="mainGalleryImg" src="">
+        </div>
         <div class="gallery-thumbs" id="galleryThumbs"></div>
         <h2 id="detailsTitle" style="font-size: 20px; font-weight: 900; margin-bottom: 12px;">ID Title</h2>
         <div class="details-grid">
@@ -547,7 +549,7 @@
     // --- REAL-TIME LOGIC SETUP ---
     var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
     var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
-    var BASE_PURCHASES_PER_HOUR = 15;
+    var BASE_PURCHASES_PER_HOUR = 30;
 
     function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
     function getHoursSinceReference() { return Math.max(0, Math.floor((Date.now() - REFERENCE_TIME) / 3600000)); }
@@ -564,6 +566,11 @@
     let qrTimerInterval = null;
     let qrTimeLeft = 300;
     let selectedPhotoDataURL = null;
+    let currentGalleryIndex = 0; // For touch swipe
+    
+    // Swipe variables
+    let galleryTouchStartX = 0;
+    let galleryTouchEndX = 0;
 
     // --- INITIALIZATION ---
     window.onload = async () => {
@@ -584,8 +591,48 @@
       setInterval(fluctuateViewers, 5000);
       setInterval(purchaseTick, 5000); 
       setInterval(updateNotificationTimes, 30000);
-      setInterval(renderReviews, 60000); // Update counts every minute
+      setInterval(renderReviews, 60000); 
+      
+      // Setup Gallery Swipe
+      const galleryContainer = document.getElementById('galleryContainer');
+      if(galleryContainer) {
+          galleryContainer.addEventListener('touchstart', e => {
+              galleryTouchStartX = e.changedTouches[0].screenX;
+          });
+          galleryContainer.addEventListener('touchend', e => {
+              galleryTouchEndX = e.changedTouches[0].screenX;
+              handleGallerySwipe();
+          });
+      }
     };
+
+    function handleGallerySwipe() {
+        if (!currentAccount || !currentAccount.gallery) return;
+        if (galleryTouchEndX < galleryTouchStartX - 50) {
+            // Swipe Left -> Next Image
+            if (currentGalleryIndex < currentAccount.gallery.length - 1) {
+                currentGalleryIndex++;
+                updateGalleryView();
+            }
+        }
+        if (galleryTouchEndX > galleryTouchStartX + 50) {
+            // Swipe Right -> Prev Image
+            if (currentGalleryIndex > 0) {
+                currentGalleryIndex--;
+                updateGalleryView();
+            }
+        }
+    }
+
+    function updateGalleryView() {
+        if (!currentAccount || !currentAccount.gallery) return;
+        const mainImg = document.getElementById('mainGalleryImg');
+        mainImg.src = currentAccount.gallery[currentGalleryIndex];
+        document.querySelectorAll('.gallery-thumbs img').forEach((el, i) => {
+            if(i === currentGalleryIndex) el.classList.add('active');
+            else el.classList.remove('active');
+        });
+    }
 
     // --- MAIN DATA LOADING ---
     async function loadAccounts() {
@@ -667,7 +714,15 @@
 
       const mainImg = document.getElementById('mainGalleryImg');
       const thumbs = document.getElementById('galleryThumbs');
-      mainImg.src = currentAccount.gallery[0];
+      
+      currentGalleryIndex = 0; // Reset index
+      
+      if (currentAccount.gallery.length > 0) {
+          mainImg.src = currentAccount.gallery[0];
+      } else {
+          mainImg.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
+      }
+      
       thumbs.innerHTML = '';
       
       const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
@@ -677,7 +732,12 @@
         t.src = img; 
         if(i===0) t.classList.add('active');
         t.onerror = function() { this.src = fallbackImg; };
-        t.onclick = () => { mainImg.src = img; document.querySelectorAll('.gallery-thumbs img').forEach(el=>el.classList.remove('active')); t.classList.add('active'); };
+        t.onclick = () => { 
+            currentGalleryIndex = i;
+            mainImg.src = img; 
+            document.querySelectorAll('.gallery-thumbs img').forEach(el=>el.classList.remove('active')); 
+            t.classList.add('active'); 
+        };
         thumbs.appendChild(t);
       });
       document.getElementById('detailsOverlay').style.display = 'flex';
@@ -1003,7 +1063,7 @@
       let saved = localStorage.getItem(USER_REVIEWS_KEY);
       let userRevs = saved ? JSON.parse(saved) : [];
       userRevs.unshift(review);
-      userRevs = userRevs.slice(0, 20); // Limit to 20
+      userRevs = userRevs.slice(0, 20); 
       localStorage.setItem(USER_REVIEWS_KEY, JSON.stringify(userRevs));
     }
 
@@ -1064,7 +1124,7 @@
         showToast('Thanks for your feedback!', 'success');
       }
       saveHelpfulStates(states);
-      renderReviews(); // Re-render to apply correct count based on real-time + user state
+      renderReviews();
     }
 
     function showMoreStats(count) {
@@ -1350,7 +1410,7 @@
         <div class="notif-row">
           <div class="notif-avatar"><img src="${buyer.avatar || avatarFallback}" onerror="this.src='${avatarFallback}'"></div>
           <div class="notif-content"><strong>${buyer.name || 'You'}</strong> just bought <br><span style="color:#FF0000; font-weight:700;">${acc.title}</span><div style="font-size:11px; color:#0CFF00; font-weight:800; margin-top:2px; text-shadow:0 1px 0 #000;">for ₹${acc.price}</div></div>
-          <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.style.display='none'"></div>
+          <div class="notif-id-thumb"><img src="${acc.mainImage}" onerror="this.src='${avatarFallback}'"></div>
         </div>
       `;
       cont.appendChild(notif);
