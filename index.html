@@ -549,7 +549,7 @@
     // --- REAL-TIME LOGIC SETUP ---
     var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
     var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
-    var BASE_PURCHASES_PER_HOUR = 40; // Increased for more frequent notifications
+    var BASE_PURCHASES_PER_HOUR = 40;
 
     function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
     function getHoursSinceReference() { return Math.max(0, Math.floor((Date.now() - REFERENCE_TIME) / 3600000)); }
@@ -557,7 +557,7 @@
 
     // --- CORE VARIABLES ---
     const fallbackData = [
-      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
+      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", totalImages: 1, level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
     ];
     let accountsData = [];
     let filteredData = [];
@@ -575,6 +575,12 @@
 
     // --- INITIALIZATION ---
     window.onload = async () => {
+      // Clear old cache that might be causing mix-ups
+      for(let i=0; i<localStorage.length; i++) {
+          let key = localStorage.key(i);
+          if(key && key.startsWith('ff_gal_')) { localStorage.removeItem(key); i--; }
+      }
+      
       loadProfile();
       await loadAccounts();
       startLiveFeed();
@@ -635,31 +641,6 @@
         });
     }
 
-    // --- DYNAMIC GALLERY FETCHING ---
-    async function getGalleryImages(folderName) {
-      const cacheKey = 'ff_gal_' + folderName;
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-          try { return JSON.parse(cached); } catch(e){}
-      }
-
-      try {
-          const res = await fetch(`https://api.github.com/repos/forviews1st-hub/ff-id-sale-store/contents/id-images/${folderName}`);
-          if (!res.ok) throw new Error("API limit or error");
-          const data = await res.json();
-          if (Array.isArray(data)) {
-              const urls = data
-                  .filter(item => item.type === 'file' && /\.(jpg|jpeg|png|webp)$/i.test(item.name))
-                  .map(item => item.download_url);
-              localStorage.setItem(cacheKey, JSON.stringify(urls));
-              return urls;
-          }
-      } catch (e) {
-          console.log("Gallery fetch failed for", folderName);
-      }
-      return []; // Return empty if API fails and no cache
-    }
-
     // --- MAIN DATA LOADING ---
     async function loadAccounts() {
       try {
@@ -669,9 +650,7 @@
         
         accountsData = rawData.map(acc => {
           const folderPath = acc.folder ? acc.folder + '/' : '';
-          // Main image (thumbnail) abhi ke liye hardcoded 1.jpg rahega, but gallery dynamic hogi
           const mainImg = BASE_URL + folderPath + '1.jpg';
-          
           return { ...acc, mainImage: mainImg };
         });
 
@@ -739,25 +718,17 @@
       const mainImg = document.getElementById('mainGalleryImg');
       const thumbs = document.getElementById('galleryThumbs');
       
-      // Show loading state
-      thumbs.innerHTML = '<p style="color:#FFF; font-size:12px; width:100%; text-align:center;">Loading gallery...</p>';
-      mainImg.src = currentAccount.mainImage;
-      currentGalleryIndex = 0;
-      
-      // Fetch dynamic images
-      currentGalleryImages = await getGalleryImages(currentAccount.folder);
-      
-      // Agar API fail ho jaye (rate limit), toh fallback to static list (if any)
-      if (!currentGalleryImages || currentGalleryImages.length === 0) {
-          currentGalleryImages = [currentAccount.mainImage];
-          // agar data.json mein purana "images" array hai to use bhi try kar sakte hain
-          if (currentAccount.images) {
-             currentGalleryImages = currentAccount.images.map(img => BASE_URL + currentAccount.folder + '/' + img);
-          }
+      // Generate dynamic images based on totalImages
+      currentGalleryImages = [];
+      let total = currentAccount.totalImages || 1;
+      const folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
+      for(let i = 1; i <= total; i++) {
+          currentGalleryImages.push(BASE_URL + folderPath + i + '.jpg');
       }
 
       mainImg.src = currentGalleryImages[0];
       thumbs.innerHTML = '';
+      currentGalleryIndex = 0;
       
       const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
       
@@ -1341,7 +1312,7 @@
       var timeStr = formatTimeAgo(timestamp); 
       var cityText = buyer.city ? ('from ' + buyer.city) : ''; 
       var priceShown = acc.price;
-      var imgSrc = acc.mainImage || avatarFallback; // Using mainImage instead of just fallback
+      var imgSrc = acc.mainImage || avatarFallback; 
       
       var avatarHTML = `<div class="pulse-avatar"><img class="img-blur" src="${buyer.avatar || avatarFallback}" alt="${buyer.name}" onerror="this.src='${avatarFallback}'"></div>`;
       
