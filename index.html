@@ -549,7 +549,7 @@
     // --- REAL-TIME LOGIC SETUP ---
     var REFERENCE_TIME = new Date('2026-06-01T00:00:00Z').getTime();
     var GLOBAL_STREAM_REFERENCE_TIME = new Date('2026-01-01T00:00:00Z').getTime();
-    var BASE_PURCHASES_PER_HOUR = 30;
+    var BASE_PURCHASES_PER_HOUR = 40; // Increased for more frequent notifications
 
     function pseudoRandom(seed) { var x = Math.sin(seed) * 10000; return x - Math.floor(x); }
     function getHoursSinceReference() { return Math.max(0, Math.floor((Date.now() - REFERENCE_TIME) / 3600000)); }
@@ -557,7 +557,7 @@
 
     // --- CORE VARIABLES ---
     const fallbackData = [
-      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", images: ["1.jpg"], level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
+      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
     ];
     let accountsData = [];
     let filteredData = [];
@@ -566,7 +566,8 @@
     let qrTimerInterval = null;
     let qrTimeLeft = 300;
     let selectedPhotoDataURL = null;
-    let currentGalleryIndex = 0; // For touch swipe
+    let currentGalleryImages = [];
+    let currentGalleryIndex = 0;
     
     // Swipe variables
     let galleryTouchStartX = 0;
@@ -607,10 +608,10 @@
     };
 
     function handleGallerySwipe() {
-        if (!currentAccount || !currentAccount.gallery) return;
+        if (!currentGalleryImages || currentGalleryImages.length === 0) return;
         if (galleryTouchEndX < galleryTouchStartX - 50) {
             // Swipe Left -> Next Image
-            if (currentGalleryIndex < currentAccount.gallery.length - 1) {
+            if (currentGalleryIndex < currentGalleryImages.length - 1) {
                 currentGalleryIndex++;
                 updateGalleryView();
             }
@@ -625,13 +626,38 @@
     }
 
     function updateGalleryView() {
-        if (!currentAccount || !currentAccount.gallery) return;
+        if (!currentGalleryImages || currentGalleryImages.length === 0) return;
         const mainImg = document.getElementById('mainGalleryImg');
-        mainImg.src = currentAccount.gallery[currentGalleryIndex];
+        mainImg.src = currentGalleryImages[currentGalleryIndex];
         document.querySelectorAll('.gallery-thumbs img').forEach((el, i) => {
             if(i === currentGalleryIndex) el.classList.add('active');
             else el.classList.remove('active');
         });
+    }
+
+    // --- DYNAMIC GALLERY FETCHING ---
+    async function getGalleryImages(folderName) {
+      const cacheKey = 'ff_gal_' + folderName;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+          try { return JSON.parse(cached); } catch(e){}
+      }
+
+      try {
+          const res = await fetch(`https://api.github.com/repos/forviews1st-hub/ff-id-sale-store/contents/id-images/${folderName}`);
+          if (!res.ok) throw new Error("API limit or error");
+          const data = await res.json();
+          if (Array.isArray(data)) {
+              const urls = data
+                  .filter(item => item.type === 'file' && /\.(jpg|jpeg|png|webp)$/i.test(item.name))
+                  .map(item => item.download_url);
+              localStorage.setItem(cacheKey, JSON.stringify(urls));
+              return urls;
+          }
+      } catch (e) {
+          console.log("Gallery fetch failed for", folderName);
+      }
+      return []; // Return empty if API fails and no cache
     }
 
     // --- MAIN DATA LOADING ---
@@ -643,19 +669,17 @@
         
         accountsData = rawData.map(acc => {
           const folderPath = acc.folder ? acc.folder + '/' : '';
-          const imgList = acc.images || [];
+          // Main image (thumbnail) abhi ke liye hardcoded 1.jpg rahega, but gallery dynamic hogi
+          const mainImg = BASE_URL + folderPath + '1.jpg';
           
-          const mainImg = imgList.length > 0 ? BASE_URL + folderPath + imgList[0] : 'https://via.placeholder.com/400x250/F3F4F6/FFC107?text=No+Image';
-          const gallery = imgList.map(img => BASE_URL + folderPath + img);
-          
-          return { ...acc, mainImage: mainImg, gallery: gallery };
+          return { ...acc, mainImage: mainImg };
         });
 
       } catch (e) {
         accountsData = fallbackData.map(acc => {
             const folderPath = acc.folder ? acc.folder + '/' : '';
-            const mainImg = BASE_URL + folderPath + acc.images[0];
-            return { ...acc, mainImage: mainImg, gallery: [mainImg] };
+            const mainImg = BASE_URL + folderPath + '1.jpg';
+            return { ...acc, mainImage: mainImg };
         });
       }
       filteredData = [...accountsData];
@@ -702,7 +726,7 @@
       applyImageBlur();
     }
 
-    function openDetails(id) {
+    async function openDetails(id) {
       currentAccount = accountsData.find(a => a.id === id);
       document.getElementById('detailsTitle').textContent = currentAccount.title;
       document.getElementById('detailsLevel').textContent = currentAccount.level;
@@ -715,19 +739,29 @@
       const mainImg = document.getElementById('mainGalleryImg');
       const thumbs = document.getElementById('galleryThumbs');
       
-      currentGalleryIndex = 0; // Reset index
+      // Show loading state
+      thumbs.innerHTML = '<p style="color:#FFF; font-size:12px; width:100%; text-align:center;">Loading gallery...</p>';
+      mainImg.src = currentAccount.mainImage;
+      currentGalleryIndex = 0;
       
-      if (currentAccount.gallery.length > 0) {
-          mainImg.src = currentAccount.gallery[0];
-      } else {
-          mainImg.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
+      // Fetch dynamic images
+      currentGalleryImages = await getGalleryImages(currentAccount.folder);
+      
+      // Agar API fail ho jaye (rate limit), toh fallback to static list (if any)
+      if (!currentGalleryImages || currentGalleryImages.length === 0) {
+          currentGalleryImages = [currentAccount.mainImage];
+          // agar data.json mein purana "images" array hai to use bhi try kar sakte hain
+          if (currentAccount.images) {
+             currentGalleryImages = currentAccount.images.map(img => BASE_URL + currentAccount.folder + '/' + img);
+          }
       }
-      
+
+      mainImg.src = currentGalleryImages[0];
       thumbs.innerHTML = '';
       
       const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
       
-      currentAccount.gallery.forEach((img, i) => {
+      currentGalleryImages.forEach((img, i) => {
         const t = document.createElement('img');
         t.src = img; 
         if(i===0) t.classList.add('active');
@@ -1307,7 +1341,7 @@
       var timeStr = formatTimeAgo(timestamp); 
       var cityText = buyer.city ? ('from ' + buyer.city) : ''; 
       var priceShown = acc.price;
-      var imgSrc = acc.mainImage || avatarFallback;
+      var imgSrc = acc.mainImage || avatarFallback; // Using mainImage instead of just fallback
       
       var avatarHTML = `<div class="pulse-avatar"><img class="img-blur" src="${buyer.avatar || avatarFallback}" alt="${buyer.name}" onerror="this.src='${avatarFallback}'"></div>`;
       
