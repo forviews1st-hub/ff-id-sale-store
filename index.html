@@ -557,7 +557,7 @@
 
     // --- CORE VARIABLES ---
     const fallbackData = [
-      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
+      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", totalImages: 1, level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
     ];
     let accountsData = [];
     let filteredData = [];
@@ -718,40 +718,13 @@
       const mainImg = document.getElementById('mainGalleryImg');
       const thumbs = document.getElementById('galleryThumbs');
       
-      // Smart Dynamic Image Loader (Zero Maintenance)
-      // Ye 1.jpg se lekar 30.jpg tak check karega. Jo milega usko gallery me daal dega.
-      thumbs.innerHTML = '<p style="color:#FFF; font-size:12px; width:100%; text-align:center;">Loading gallery...</p>';
-      mainImg.src = currentAccount.mainImage;
+      // Total Images loop based on data.json
       currentGalleryImages = [];
+      let total = currentAccount.totalImages || 1;
+      const folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
       
-      let folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
-      let promises = [];
-      let maxImagesToCheck = 30; 
-
-      for (let i = 1; i <= maxImagesToCheck; i++) {
-          let imgUrl = BASE_URL + folderPath + i + '.jpg';
-          promises.push(
-              new Promise((resolve) => {
-                  let img = new Image();
-                  img.onload = () => { currentGalleryImages.push(imgUrl); resolve(); };
-                  img.onerror = () => { resolve(); };
-                  img.src = imgUrl;
-              })
-          );
-      }
-
-      await Promise.all(promises);
-      
-      // Sort images numerically (1.jpg, 2.jpg, 3.jpg...)
-      currentGalleryImages.sort((a, b) => {
-          let aNum = parseInt(a.match(/(\d+)\.jpg/)[1]);
-          let bNum = parseInt(b.match(/(\d+)\.jpg/)[1]);
-          return aNum - bNum;
-      });
-
-      // Agar ek bhi image nahi mili toh fallback
-      if (currentGalleryImages.length === 0) {
-          currentGalleryImages = [currentAccount.mainImage];
+      for(let i = 1; i <= total; i++) {
+          currentGalleryImages.push(BASE_URL + folderPath + i + '.jpg');
       }
 
       mainImg.src = currentGalleryImages[0];
@@ -1487,187 +1460,4 @@
       };
       var timestamp = Date.now();
       
-      showLiveNotificationFor(buyer, acc, timestamp);
-    }
-
-    function hasAnyProfileDetail() {
-      return !!(localStorage.getItem('ff_profile_name') || localStorage.getItem('ff_profile_city') || localStorage.getItem('ff_profile_photo'));
-    }
-
-    // --- HERO COUNTERS (Real Time) ---
-    var isFirstRender = true;
-    function animateValue(obj, start, end, duration) {
-        if (start === end) return;
-        var range = end - start;
-        var current = start;
-        var increment = end > start ? 1 : -1;
-        var stepTime = Math.abs(Math.floor(duration / range));
-        if (stepTime < 15) stepTime = 15;
-        var timer = setInterval(function() {
-            current += increment;
-            obj.textContent = current.toLocaleString('en-IN') + '+';
-            if (current == end) {
-                clearInterval(timer);
-            }
-        }, stepTime);
-    }
-
-    function renderHeroCounters() {
-      var totalPurchases = getTotalPurchases();
-      var sold = 5000 + totalPurchases;
-      var buyers = 9935 + Math.floor(totalPurchases * 0.8);
-
-      var soldEl = document.getElementById('heroSoldCount');
-      if (soldEl) {
-          if (isFirstRender) {
-              soldEl.textContent = sold.toLocaleString('en-IN') + '+';
-          } else {
-              var currentSold = parseInt(soldEl.textContent.replace(/[^0-9]/g, '')) || 5000;
-              if (currentSold !== sold) {
-                  animateValue(soldEl, currentSold, sold, 1200);
-              }
-          }
-      }
-
-      var buyersEl = document.getElementById('whyTrustBuyers');
-      if (buyersEl) {
-          if (isFirstRender) {
-              buyersEl.textContent = buyers.toLocaleString('en-IN') + '+';
-          } else {
-              var currentBuyers = parseInt(buyersEl.textContent.replace(/[^0-9]/g, '')) || 9935;
-              if (currentBuyers !== buyers) {
-                  animateValue(buyersEl, currentBuyers, buyers, 1200);
-              }
-          }
-      }
-
-      var tbEl = document.getElementById('trustedByCount');
-      if (tbEl) {
-          if (isFirstRender) {
-              tbEl.textContent = buyers.toLocaleString('en-IN');
-          } else {
-              var currentTb = parseInt(tbEl.textContent.replace(/[^0-9]/g, '')) || 9935;
-              if (currentTb !== buyers) {
-                  tbEl.textContent = buyers.toLocaleString('en-IN');
-              }
-          }
-      }
-
-      isFirstRender = false;
-    }
-
-    // --- UTILS & HELPERS ---
-    function openLegal(type) {
-      const title = type === 'privacy' ? 'Privacy Policy' : 'Terms of Service';
-      const content = type === 'privacy' 
-        ? 'We collect your WhatsApp number solely to deliver your ID. We do not store payment details. All transactions are secure.'
-        : 'By buying an ID, you agree that the password change is your responsibility. Refunds are not available once ID details are shared.';
-      document.getElementById('legalTitle').textContent = title;
-      document.getElementById('legalContent').textContent = content;
-      document.getElementById('legalOverlay').style.display = 'flex';
-      document.body.classList.add('modal-open');
-    }
-
-    function closeModal(id) { 
-      document.getElementById(id).style.display = 'none'; 
-      if(!document.querySelector('.modal-overlay[style*="display: flex"]')) {
-          document.body.classList.remove('modal-open');
-      }
-    }
-    
-    function showAlert(title, msg, icon) {
-      const overlay = document.createElement('div'); overlay.className = 'custom-alert-overlay';
-      overlay.innerHTML = `
-        <div class="custom-alert-box">
-          <div class="custom-alert-icon">${icon}</div>
-          <div class="custom-alert-title">${title}</div>
-          <div class="custom-alert-message">${msg}</div>
-          <button class="custom-alert-btn" onclick="this.closest('.custom-alert-overlay').remove()">OK</button>
-        </div>
-      `;
-      document.body.appendChild(overlay);
-    }
-
-    function showToast(msg) {
-      const cont = document.getElementById('toastContainer');
-      const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
-      cont.appendChild(t);
-      setTimeout(() => t.remove(), 3000);
-    }
-
-    function spawnConfetti() {
-      const cont = document.getElementById('confettiContainer');
-      cont.innerHTML = '';
-      const colors = ['#FFC107', '#FF9800', '#FF0000', '#0CFF00'];
-      for(let i=0; i<50; i++) {
-        const p = document.createElement('div'); p.className = 'confetti-piece';
-        p.style.left = Math.random()*100 + '%';
-        p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-        p.style.animationDuration = (Math.random()*2 + 2) + 's';
-        p.style.animationDelay = Math.random() + 's';
-        cont.appendChild(p);
-      }
-      setTimeout(() => cont.innerHTML = '', 4000);
-    }
-
-    function playOrderSound() {
-      try { 
-        var ctx = new (window.AudioContext || window.webkitAudioContext)(); 
-        var o = ctx.createOscillator(); var g = ctx.createGain();
-        o.type = 'sine'; o.frequency.setValueAtTime(880, ctx.currentTime);
-        g.gain.setValueAtTime(0.1, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-        o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.5);
-      } catch(e) {}
-    }
-
-    function initScrollReveal() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('is-visible'); observer.unobserve(e.target); } });
-      }, { threshold: 0.1 });
-      document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-    }
-
-    function applyImageBlur() {
-      document.querySelectorAll('img').forEach(function(img) {
-        if (!img.classList.contains('img-blur')) { img.classList.add('img-blur'); }
-        if (img.complete) { img.classList.remove('img-blur'); } 
-        else { img.addEventListener('load', function() { this.classList.remove('img-blur'); }); img.addEventListener('error', function() { this.classList.remove('img-blur'); }); }
-      });
-    }
-
-    function updateNotificationTimes() {
-      document.querySelectorAll('.pulse-item').forEach(function(item) { 
-        var ts = parseInt(item.getAttribute('data-timestamp')); 
-        if (!ts) return; 
-        var timeSpan = item.querySelector('.pulse-time-text'); 
-        if (timeSpan) timeSpan.textContent = formatTimeAgo(ts); 
-      });
-    }
-
-    function formatTimeAgo(timestamp) {
-      var diffMs = Date.now() - timestamp; var diffSec = Math.floor(diffMs / 1000);
-      if (diffSec < 60) return 'Just now';
-      var diffMins = Math.floor(diffSec / 60); if (diffMins < 60) return diffMins + (diffMins === 1 ? ' min ago' : ' mins ago');
-      var diffHours = Math.floor(diffMins / 60); if (diffHours < 24) return diffHours + (diffHours === 1 ? ' hour ago' : ' hours ago');
-      var diffDays = Math.floor(diffHours / 24); if (diffDays < 30) return diffDays + (diffDays === 1 ? ' day ago' : ' days ago');
-      var diffMonths = Math.floor(diffDays / 30); if (diffMonths < 12) return diffMonths + (diffMonths === 1 ? ' month ago' : ' months ago');
-      var diffYears = Math.floor(diffMonths / 12); return diffYears + (diffYears === 1 ? ' year ago' : ' years ago');
-    }
-
-    // --- DYNAMIC ICONS INJECTION ---
-    function injectIcons() {
-      document.getElementById('tfIcon1').innerHTML = ICONS.controller;
-      document.getElementById('tfIcon2').innerHTML = ICONS.trophy;
-      document.getElementById('tfIcon3').innerHTML = ICONS.check;
-      document.getElementById('tfIcon4').innerHTML = ICONS.lock;
-      
-      var writeReviewBtn = document.getElementById('writeReviewBtn'); if (writeReviewBtn) writeReviewBtn.innerHTML = '✏️ Write a Review';
-      var regenerateQrBtn = document.getElementById('regenerateQrBtn'); if (regenerateQrBtn) regenerateQrBtn.innerHTML = '🔄 Generate New QR';
-    }
-
-    function initCountdowns() { /* Not used for ID store, but kept for structure if needed */ }
-    function updateCountdowns() { /* Not used for ID store */ }
-
-  </script>
-</body>
-</html>
+      showLiveNotificationFor(buy
