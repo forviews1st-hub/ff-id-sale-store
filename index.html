@@ -557,7 +557,7 @@
 
     // --- CORE VARIABLES ---
     const fallbackData = [
-      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", totalImages: 1, level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
+      { id: "id1", title: "Level 65 | Prime 8 Grandmaster", price: 4000, status: "Available", folder: "id1", level: 65, rank: "Grandmaster", emailBind: "Yes", fbBind: "No", evoGuns: "15", bundles: "5", tags: ["Rare"] }
     ];
     let accountsData = [];
     let filteredData = [];
@@ -718,12 +718,40 @@
       const mainImg = document.getElementById('mainGalleryImg');
       const thumbs = document.getElementById('galleryThumbs');
       
-      // Generate dynamic images based on totalImages
+      // Smart Dynamic Image Loader (Zero Maintenance)
+      // Ye 1.jpg se lekar 30.jpg tak check karega. Jo milega usko gallery me daal dega.
+      thumbs.innerHTML = '<p style="color:#FFF; font-size:12px; width:100%; text-align:center;">Loading gallery...</p>';
+      mainImg.src = currentAccount.mainImage;
       currentGalleryImages = [];
-      let total = currentAccount.totalImages || 1;
-      const folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
-      for(let i = 1; i <= total; i++) {
-          currentGalleryImages.push(BASE_URL + folderPath + i + '.jpg');
+      
+      let folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
+      let promises = [];
+      let maxImagesToCheck = 30; 
+
+      for (let i = 1; i <= maxImagesToCheck; i++) {
+          let imgUrl = BASE_URL + folderPath + i + '.jpg';
+          promises.push(
+              new Promise((resolve) => {
+                  let img = new Image();
+                  img.onload = () => { currentGalleryImages.push(imgUrl); resolve(); };
+                  img.onerror = () => { resolve(); };
+                  img.src = imgUrl;
+              })
+          );
+      }
+
+      await Promise.all(promises);
+      
+      // Sort images numerically (1.jpg, 2.jpg, 3.jpg...)
+      currentGalleryImages.sort((a, b) => {
+          let aNum = parseInt(a.match(/(\d+)\.jpg/)[1]);
+          let bNum = parseInt(b.match(/(\d+)\.jpg/)[1]);
+          return aNum - bNum;
+      });
+
+      // Agar ek bhi image nahi mili toh fallback
+      if (currentGalleryImages.length === 0) {
+          currentGalleryImages = [currentAccount.mainImage];
       }
 
       mainImg.src = currentGalleryImages[0];
