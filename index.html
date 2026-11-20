@@ -13,6 +13,9 @@
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Poppins', sans-serif; background: #000; min-height: 100vh; color: #1A1A1A; overflow-x: hidden; position: relative; }
     
+    /* FIX: Background scroll lock jab modal open ho */
+    body.modal-open { overflow: hidden !important; }
+
     body::before { content: ''; position: fixed; inset: 0; background: url('https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
     body::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: -1; }
     
@@ -575,7 +578,7 @@
 
     // --- INITIALIZATION ---
     window.onload = async () => {
-      // Clear old cache
+      // Clear old cache that might be causing mix-ups
       for(let i=0; i<localStorage.length; i++) {
           let key = localStorage.key(i);
           if(key && key.startsWith('ff_gal_')) { localStorage.removeItem(key); i--; }
@@ -597,7 +600,6 @@
       setInterval(updateCountdowns, 1000);
       setInterval(fluctuateViewers, 5000);
       setInterval(updateNotificationTimes, 30000);
-      setInterval(renderReviews, 60000); 
       
       // Setup Gallery Swipe
       const galleryContainer = document.getElementById('galleryContainer');
@@ -641,7 +643,7 @@
     // --- MAIN DATA LOADING ---
     async function loadAccounts() {
       try {
-        // Cache Buster for data.json to fix wrong image issue
+        // Added cache-buster to prevent browser from caching old data.json
         const res = await fetch('data.json?t=' + new Date().getTime());
         if (!res.ok) throw new Error("File not found");
         let rawData = await res.json();
@@ -716,34 +718,33 @@
       const mainImg = document.getElementById('mainGalleryImg');
       const thumbs = document.getElementById('galleryThumbs');
       
-      // Dynamic Image Loader (Optimized to prevent network crash)
       thumbs.innerHTML = '<p style="color:#FFF; font-size:12px; width:100%; text-align:center;">Loading gallery...</p>';
       mainImg.src = currentAccount.mainImage;
       currentGalleryImages = [];
       
       let folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
-      let promises = [];
-      let maxImagesToCheck = 15; // 15 images are enough
-
-      for (let i = 1; i <= maxImagesToCheck; i++) {
-          let imgUrl = BASE_URL + folderPath + i + '.jpg';
-          promises.push(
-              new Promise((resolve) => {
-                  let img = new Image();
-                  img.onload = () => { currentGalleryImages.push(imgUrl); resolve(); };
-                  img.onerror = () => { resolve(); };
-                  img.src = imgUrl;
-              })
-          );
-      }
-
-      await Promise.all(promises);
       
-      currentGalleryImages.sort((a, b) => {
-          let aNum = parseInt(a.match(/(\d+)\.jpg/)[1]);
-          let bNum = parseInt(b.match(/(\d+)\.jpg/)[1]);
-          return aNum - bNum;
-      });
+      // SMART IMAGE LOADER
+      let i = 1;
+      let keepLoading = true;
+      
+      while (keepLoading && i <= 50) {
+          let imgUrl = BASE_URL + folderPath + i + '.jpg';
+          
+          let exists = await new Promise((resolve) => {
+              let img = new Image();
+              img.onload = () => resolve(true);
+              img.onerror = () => resolve(false);
+              img.src = imgUrl;
+          });
+
+          if (exists) {
+              currentGalleryImages.push(imgUrl);
+              i++;
+          } else {
+              keepLoading = false;
+          }
+      }
 
       if (currentGalleryImages.length === 0) {
           currentGalleryImages = [currentAccount.mainImage];
@@ -983,11 +984,23 @@
     const avatarFallback = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50'><rect width='50' height='50' fill='%23FFC107'/><text x='50%' y='50%' font-size='20' text-anchor='middle' dy='.3em'>👤</text></svg>";
 
     function fetchDynamicAvatars() {
+      let cachedAvatars = localStorage.getItem('ff_avatars_cache');
+      let cacheTime = localStorage.getItem('ff_avatars_time');
+      let now = new Date().getTime();
+
+      if (cachedAvatars && cacheTime && (now - cacheTime < 24 * 60 * 60 * 1000)) {
+          dynamicAvatars = JSON.parse(cachedAvatars);
+          renderTrustedByRow();
+          return;
+      }
+
       fetch('https://api.github.com/repos/forviews1st-hub/ff-id-sale-store/contents/avatars')
         .then(r => r.json())
         .then(data => {
           if (Array.isArray(data)) {
             dynamicAvatars = data.filter(item => item.type === 'file' && /\.(jpg|jpeg|png|webp)$/i.test(item.name)).map(item => "https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/avatars/" + item.name);
+            localStorage.setItem('ff_avatars_cache', JSON.stringify(dynamicAvatars));
+            localStorage.setItem('ff_avatars_time', now);
             renderTrustedByRow();
           }
         }).catch(()=>{
