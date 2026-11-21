@@ -13,7 +13,7 @@
     * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Poppins', sans-serif; background: #000; min-height: 100vh; color: #1A1A1A; overflow-x: hidden; position: relative; }
     
-    /* FIX: Background scroll lock jab modal open ho */
+    /* FIX: Background scroll lock */
     body.modal-open { overflow: hidden !important; }
 
     body::before { content: ''; position: fixed; inset: 0; background: url('https://raw.githubusercontent.com/forviews1st-hub/ff-id-sale-store/main/images/bg.png') no-repeat center center; background-size: cover; z-index: -2; }
@@ -63,11 +63,17 @@
     .trust-features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
     @media (min-width: 700px) { .trust-features { grid-template-columns: repeat(4, 1fr); } }
     .trust-feature-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 16px 8px; background: #FFFFFF; border: 2px solid #E5E7EB; border-radius: 22px; box-shadow: 0 4px 0 #D1D5DB; }
-    .tf-icon-wrap { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 0 #C77A00; }
+    .tf-icon-wrap { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
     
-    /* Alternating Colors Fix */
-    .trust-feature-card:nth-child(1) .tf-icon-wrap, .trust-feature-card:nth-child(3) .tf-icon-wrap { background: var(--deep-yellow-grad); }
-    .trust-feature-card:nth-child(2) .tf-icon-wrap, .trust-feature-card:nth-child(4) .tf-icon-wrap { background: var(--green-grad); }
+    /* FIX: 3D Shadows Colors */
+    .trust-feature-card:nth-child(1) .tf-icon-wrap, .trust-feature-card:nth-child(3) .tf-icon-wrap { 
+        background: var(--deep-yellow-grad); 
+        box-shadow: 0 4px 0 #C77A00; 
+    }
+    .trust-feature-card:nth-child(2) .tf-icon-wrap, .trust-feature-card:nth-child(4) .tf-icon-wrap { 
+        background: var(--green-grad); 
+        box-shadow: 0 4px 0 #076B00; /* Fixed Green Shadow */
+    }
     
     .tf-label { font-size: 18px; font-weight: 800; color: #1A1A1A; }
     .tf-value { font-size: 9px; color: #4A4A4A; letter-spacing: 0.7px; font-weight: 700; text-transform: uppercase; }
@@ -643,7 +649,7 @@
     // --- MAIN DATA LOADING ---
     async function loadAccounts() {
       try {
-        // Cache buster to prevent browser from caching old data.json
+        // Added cache-buster to prevent browser from caching old data.json
         const res = await fetch('data.json?t=' + new Date().getTime());
         if (!res.ok) throw new Error("File not found");
         let rawData = await res.json();
@@ -705,8 +711,11 @@
       applyImageBlur();
     }
 
-    async function openDetails(id) {
+    // FIX: Modal opens instantly, images load in background
+    function openDetails(id) {
       currentAccount = accountsData.find(a => a.id === id);
+      if(!currentAccount) return;
+
       document.getElementById('detailsTitle').textContent = currentAccount.title;
       document.getElementById('detailsLevel').textContent = currentAccount.level;
       document.getElementById('detailsRank').textContent = currentAccount.rank;
@@ -722,57 +731,62 @@
       mainImg.src = currentAccount.mainImage;
       currentGalleryImages = [];
       
-      let folderPath = currentAccount.folder ? currentAccount.folder + '/' : '';
-      let timestamp = new Date().getTime(); // Cache buster
-
-      // SMART IMAGE LOADER (With Cache Buster)
-      let i = 1;
-      let keepLoading = true;
-      
-      while (keepLoading && i <= 50) {
-          let imgUrl = BASE_URL + folderPath + i + '.jpg?t=' + timestamp + i;
-          
-          let exists = await new Promise((resolve) => {
-              let img = new Image();
-              img.onload = () => resolve(true);
-              img.onerror = () => resolve(false);
-              img.src = imgUrl;
-          });
-
-          if (exists) {
-              currentGalleryImages.push(imgUrl);
-              i++;
-          } else {
-              keepLoading = false;
-          }
-      }
-
-      if (currentGalleryImages.length === 0) {
-          currentGalleryImages = [currentAccount.mainImage];
-      }
-
-      mainImg.src = currentGalleryImages[0];
-      thumbs.innerHTML = '';
-      currentGalleryIndex = 0;
-      
-      const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
-      
-      currentGalleryImages.forEach((img, i) => {
-        const t = document.createElement('img');
-        t.src = img; 
-        if(i===0) t.classList.add('active');
-        t.onerror = function() { this.src = fallbackImg; };
-        t.onclick = () => { 
-            currentGalleryIndex = i;
-            mainImg.src = img; 
-            document.querySelectorAll('.gallery-thumbs img').forEach(el=>el.classList.remove('active')); 
-            t.classList.add('active'); 
-        };
-        thumbs.appendChild(t);
-      });
+      // OPEN MODAL INSTANTLY
       document.getElementById('detailsOverlay').style.display = 'flex';
       document.body.classList.add('modal-open');
-      applyImageBlur();
+      
+      // Load images in background
+      loadGalleryImages(currentAccount);
+    }
+
+    async function loadGalleryImages(account) {
+        const mainImg = document.getElementById('mainGalleryImg');
+        const thumbs = document.getElementById('galleryThumbs');
+        let folderPath = account.folder ? account.folder + '/' : '';
+        let promises = [];
+        let maxImagesToCheck = 30; // Check up to 30 images
+
+        for (let i = 1; i <= maxImagesToCheck; i++) {
+            let imgUrl = BASE_URL + folderPath + i + '.jpg';
+            promises.push(
+                new Promise((resolve) => {
+                    let img = new Image();
+                    img.onload = () => resolve({ exists: true, url: imgUrl, index: i });
+                    img.onerror = () => resolve({ exists: false, index: i });
+                    img.src = imgUrl;
+                })
+            );
+        }
+
+        let results = await Promise.all(promises);
+        let validImages = results.filter(r => r.exists).sort((a, b) => a.index - b.index);
+
+        if (validImages.length === 0) {
+            currentGalleryImages = [account.mainImage];
+        } else {
+            currentGalleryImages = validImages.map(r => r.url);
+        }
+
+        mainImg.src = currentGalleryImages[0];
+        thumbs.innerHTML = '';
+        currentGalleryIndex = 0;
+        
+        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
+        
+        currentGalleryImages.forEach((img, i) => {
+            const t = document.createElement('img');
+            t.src = img; 
+            if(i === 0) t.classList.add('active');
+            t.onerror = function() { this.src = fallbackImg; };
+            t.onclick = () => { 
+                currentGalleryIndex = i;
+                mainImg.src = img; 
+                document.querySelectorAll('.gallery-thumbs img').forEach(el => el.classList.remove('active')); 
+                t.classList.add('active'); 
+            };
+            thumbs.appendChild(t);
+        });
+        applyImageBlur();
     }
 
     // --- CHECKOUT & PAYMENT ---
