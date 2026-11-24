@@ -19,7 +19,7 @@
     body::after { content: ''; position: fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: -1; }
     
     .img-blur { filter: blur(12px); transition: filter 0.4s ease; }
-    img:not(.img-blur) { filter: blur(0); transition: filter 0.4s ease; }
+    img:not(.img-blur), video:not(.img-blur) { filter: blur(0); transition: filter 0.4s ease; }
 
     .icon-3d { width: 1.1em; height: 1.1em; vertical-align: -0.18em; display: inline-block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15)); }
     .trust-feature-card .tf-icon-wrap .icon-3d { width: 1.6em; height: 1.6em; }
@@ -99,14 +99,14 @@
     .grid-card:active { transform: translateY(4px); box-shadow: 0 4px 0 #C77A00, 0 6px 10px rgba(0,0,0,0.2); }
     
     .grid-card.sold { cursor: not-allowed; opacity: 0.8; }
-    .grid-card.sold .id-image-box img { filter: grayscale(100%) opacity(0.5); }
+    .grid-card.sold .id-image-box img, .grid-card.sold .id-image-box video { filter: grayscale(100%) opacity(0.5); }
     .sold-out-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 5; }
     .sold-out-text { background: #FF0000; color: #FFF; font-size: 20px; font-weight: 900; padding: 8px 20px; border-radius: 8px; border: 2px solid #FFF; transform: rotate(-15deg); letter-spacing: 2px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
     
     .id-image-box { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 12px; overflow: hidden; background: #F3F4F6; display: flex; align-items: center; justify-content: center; border: 1px solid #E5E7EB; }
     
-    /* Auto Crop/Zoom logic for main cards */
-    .id-image-box img { width: 100%; height: 100%; object-fit: cover; object-position: right center; transform: scale(1.15); }
+    /* Video and Image cover styles for Grid Cards */
+    .id-image-box img, .id-image-box video { width: 100%; height: 100%; object-fit: cover; object-position: center; }
     
     .price-tag { position: absolute; bottom: 8px; right: 8px; background: var(--green-grad); color: #1A1A1A; font-size: 20px; font-weight: 900; padding: 6px 14px; border-radius: 8px; box-shadow: 0 4px 0 #076B00; border: 2px solid #FFF; z-index: 6; }
     .id-tags { position: absolute; top: 8px; left: 8px; display: flex; gap: 5px; flex-wrap: wrap; z-index: 6; }
@@ -160,7 +160,7 @@
     .modal-close { position: absolute; top: 12px; right: 12px; background: #FFC107; border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 20px; cursor: pointer; color: #1A1A1A; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #C77A00; font-weight: 800; }
     .modal-body { padding: 24px 20px; }
     
-    /* VIDEO CONTAINER REPLACES GALLERY */
+    /* VIDEO CONTAINER */
     .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; position: relative; display:flex; align-items:center; justify-content:center; }
     .gallery-container video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; border-radius: 12px; }
     .gallery-container iframe { width: 100%; height: 100%; border: none; border-radius: 12px; }
@@ -312,7 +312,6 @@
         <div class="gallery-container" id="galleryContainer">
             <!-- Video or Image will be injected here -->
         </div>
-        <!-- Thumbnails completely removed -->
         <h2 id="detailsTitle" style="font-size: 20px; font-weight: 900; margin-bottom: 12px;">ID Title</h2>
         <div class="details-grid">
           <div class="detail-box"><div class="detail-label">Level</div><div class="detail-value" id="detailsLevel">-</div></div>
@@ -381,7 +380,6 @@
     <div class="confetti-container" id="confettiContainer"></div>
   </div>
 
-  <!-- WRITE REVIEW MODAL -->
   <div class="modal-overlay" id="reviewOverlay">
     <div class="modal" style="max-width: 400px;">
       <button class="modal-close" onclick="closeModal('reviewOverlay')">&times;</button>
@@ -456,7 +454,6 @@
     </div>
   </div>
 
-  <!-- MORE STATS MODAL -->
   <div class="modal-overlay" id="moreStatsOverlay">
     <div class="modal" style="max-width: 340px;">
       <button class="modal-close" onclick="closeModal('moreStatsOverlay')">&times;</button>
@@ -471,7 +468,6 @@
     </div>
   </div>
 
-  <!-- NETWORK ERROR MODAL -->
   <div class="modal-overlay" id="networkErrorOverlay">
     <div class="modal" style="max-width: 360px;">
       <button class="modal-close" onclick="closeModal('networkErrorOverlay')">&times;</button>
@@ -569,7 +565,7 @@
         
         accountsData = rawData.map(acc => {
           const folderPath = acc.folder ? acc.folder + '/' : '';
-          const mainImg = BASE_URL + folderPath + '1.jpg'; // Used only for Card Thumbnail
+          const mainImg = BASE_URL + folderPath + '1.jpg'; // Used only for Card fallback Thumbnail
           return { ...acc, mainImage: mainImg };
         });
 
@@ -601,9 +597,16 @@
         const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
         const viewerBase = viewerState[acc.id] ? viewerState[acc.id].current : 50;
 
+        // Yahan logic change kiya gaya hai: Agar video link hai to video chalega, warna fallback image aayegi
+        const mediaHtml = acc.video ? `
+            <video src="${acc.video}" muted loop autoplay playsinline preload="metadata" class="img-blur" onloadeddata="this.classList.remove('img-blur')"></video>
+        ` : `
+            <img src="${acc.mainImage}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${fallbackImg}'">
+        `;
+
         card.innerHTML = `
           <div class="id-image-box">
-            <img src="${acc.mainImage}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${fallbackImg}'">
+            ${mediaHtml}
             <div class="id-tags">${tagsHtml}</div>
             <div class="price-tag">₹${acc.price}</div>
             ${isSold ? '<div class="sold-out-overlay"><div class="sold-out-text">SOLD OUT</div></div>' : ''}
@@ -638,27 +641,24 @@
 
       const galleryContainer = document.getElementById('galleryContainer');
       
-      // OPEN MODAL INSTANTLY
       document.getElementById('detailsOverlay').style.display = 'flex';
       document.body.classList.add('modal-open');
 
       let videoUrl = currentAccount.video ? currentAccount.video.trim() : "";
 
       if (videoUrl !== "") {
-          // Agar YouTube link hai (embed link)
           if(videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
               galleryContainer.innerHTML = `
                 <iframe src="${videoUrl}" title="Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
               `;
           } 
-          // Agar Cloudinary ya direct MP4 link hai
           else {
+              // Autoplay, muted aur loop add kiya gaya hai taaki modal open hote hi video chale
               galleryContainer.innerHTML = `
-                <video src="${videoUrl}" poster="${currentAccount.mainImage}" controls playsinline></video>
+                <video src="${videoUrl}" controls autoplay muted loop playsinline></video>
               `;
           }
       } else {
-          // Fallback: Agar video nahi hai toh sirf main image dikhao
           galleryContainer.innerHTML = `<img src="${currentAccount.mainImage}" style="width:100%; height:100%; object-fit:contain;">`;
       }
     }
@@ -1513,10 +1513,10 @@
     }
 
     function applyImageBlur() {
-      document.querySelectorAll('img').forEach(function(img) {
-        if (!img.classList.contains('img-blur')) { img.classList.add('img-blur'); }
-        if (img.complete) { img.classList.remove('img-blur'); } 
-        else { img.addEventListener('load', function() { this.classList.remove('img-blur'); }); img.addEventListener('error', function() { this.classList.remove('img-blur'); }); }
+      document.querySelectorAll('img, video').forEach(function(el) {
+        if (!el.classList.contains('img-blur')) { el.classList.add('img-blur'); }
+        if (el.tagName === 'IMG' && el.complete) { el.classList.remove('img-blur'); } 
+        else { el.addEventListener('load', function() { this.classList.remove('img-blur'); }); el.addEventListener('error', function() { this.classList.remove('img-blur'); }); }
       });
     }
 
