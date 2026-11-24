@@ -105,14 +105,8 @@
     
     .id-image-box { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 12px; overflow: hidden; background: #F3F4F6; display: flex; align-items: center; justify-content: center; border: 1px solid #E5E7EB; }
     
-    /* UPDATED: Auto Crop/Zoom logic */
-    .id-image-box img { 
-        width: 100%; 
-        height: 100%; 
-        object-fit: cover; 
-        object-position: right center; 
-        transform: scale(1.15); 
-    }
+    /* Auto Crop/Zoom logic for main cards */
+    .id-image-box img { width: 100%; height: 100%; object-fit: cover; object-position: right center; transform: scale(1.15); }
     
     .price-tag { position: absolute; bottom: 8px; right: 8px; background: var(--green-grad); color: #1A1A1A; font-size: 20px; font-weight: 900; padding: 6px 14px; border-radius: 8px; box-shadow: 0 4px 0 #076B00; border: 2px solid #FFF; z-index: 6; }
     .id-tags { position: absolute; top: 8px; left: 8px; display: flex; gap: 5px; flex-wrap: wrap; z-index: 6; }
@@ -166,14 +160,11 @@
     .modal-close { position: absolute; top: 12px; right: 12px; background: #FFC107; border: none; border-radius: 50%; width: 34px; height: 34px; font-size: 20px; cursor: pointer; color: #1A1A1A; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 0 #C77A00; font-weight: 800; }
     .modal-body { padding: 24px 20px; }
     
-    .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 12px; position: relative; touch-action: pan-y; display:flex; align-items:center; justify-content:center; }
+    /* VIDEO CONTAINER REPLACES GALLERY */
+    .gallery-container { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 16px; position: relative; display:flex; align-items:center; justify-content:center; }
+    .gallery-container video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; border-radius: 12px; }
+    .gallery-container iframe { width: 100%; height: 100%; border: none; border-radius: 12px; }
     .gallery-container img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-    /* Video styling in modal */
-    .gallery-container video { width: 100%; height: 100%; object-fit: contain; background: #000; outline: none; }
-    .gallery-thumbs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
-    .gallery-thumbs img { width: 60px; height: 40px; border-radius: 6px; object-fit: cover; cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: 0.2s; }
-    .gallery-thumbs img:hover { opacity: 1; }
-    .gallery-thumbs img.active { border-color: #FFC107; opacity: 1; }
     
     .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
     .detail-box { background: #FFF; padding: 10px; border-radius: 10px; border: 1px solid #FFE082; box-shadow: 0 2px 0 #E0A000; }
@@ -319,9 +310,9 @@
       <button class="modal-close" onclick="closeModal('detailsOverlay')">&times;</button>
       <div class="modal-body">
         <div class="gallery-container" id="galleryContainer">
-            <img id="mainGalleryImg" src="">
+            <!-- Video or Image will be injected here -->
         </div>
-        <div class="gallery-thumbs" id="galleryThumbs"></div>
+        <!-- Thumbnails completely removed -->
         <h2 id="detailsTitle" style="font-size: 20px; font-weight: 900; margin-bottom: 12px;">ID Title</h2>
         <div class="details-grid">
           <div class="detail-box"><div class="detail-label">Level</div><div class="detail-value" id="detailsLevel">-</div></div>
@@ -545,10 +536,6 @@
     let qrTimerInterval = null;
     let qrTimeLeft = 300;
     let selectedPhotoDataURL = null;
-    let currentGalleryImages = [];
-    let currentGalleryIndex = 0;
-    let galleryTouchStartX = 0;
-    let galleryTouchEndX = 0;
 
     window.onload = async () => {
       for(let i=0; i<localStorage.length; i++) {
@@ -572,35 +559,7 @@
       setInterval(updateCountdowns, 1000);
       setInterval(fluctuateViewers, 5000);
       setInterval(updateNotificationTimes, 30000);
-      
-      const galleryContainer = document.getElementById('galleryContainer');
-      if(galleryContainer) {
-          galleryContainer.addEventListener('touchstart', e => { galleryTouchStartX = e.changedTouches[0].screenX; });
-          galleryContainer.addEventListener('touchend', e => { galleryTouchEndX = e.changedTouches[0].screenX; handleGallerySwipe(); });
-      }
     };
-
-    function handleGallerySwipe() {
-        if (!currentGalleryImages || currentGalleryImages.length === 0) return;
-        if (galleryTouchEndX < galleryTouchStartX - 50) {
-            if (currentGalleryIndex < currentGalleryImages.length - 1) { currentGalleryIndex++; updateGalleryView(); }
-        }
-        if (galleryTouchEndX > galleryTouchStartX + 50) {
-            if (currentGalleryIndex > 0) { currentGalleryIndex--; updateGalleryView(); }
-        }
-    }
-
-    function updateGalleryView() {
-        if (!currentGalleryImages || currentGalleryImages.length === 0) return;
-        const mainImg = document.getElementById('mainGalleryImg');
-        if(mainImg) {
-            mainImg.src = currentGalleryImages[currentGalleryIndex];
-            document.querySelectorAll('.gallery-thumbs img').forEach((el, i) => {
-                if(i === currentGalleryIndex) el.classList.add('active');
-                else el.classList.remove('active');
-            });
-        }
-    }
 
     async function loadAccounts() {
       try {
@@ -610,7 +569,7 @@
         
         accountsData = rawData.map(acc => {
           const folderPath = acc.folder ? acc.folder + '/' : '';
-          const mainImg = BASE_URL + folderPath + '1.jpg';
+          const mainImg = BASE_URL + folderPath + '1.jpg'; // Used only for Card Thumbnail
           return { ...acc, mainImage: mainImg };
         });
 
@@ -678,77 +637,30 @@
       document.getElementById('detailsBundles').textContent = currentAccount.bundles;
 
       const galleryContainer = document.getElementById('galleryContainer');
-      const thumbs = document.getElementById('galleryThumbs');
       
+      // OPEN MODAL INSTANTLY
       document.getElementById('detailsOverlay').style.display = 'flex';
       document.body.classList.add('modal-open');
 
       let videoUrl = currentAccount.video ? currentAccount.video.trim() : "";
 
       if (videoUrl !== "") {
-          // Video Mode
-          thumbs.innerHTML = ''; 
-          galleryContainer.innerHTML = `
-            <video src="${videoUrl}" poster="${currentAccount.mainImage}" controls playsinline style="width:100%; height:100%; object-fit:contain; background:#000; border-radius:12px;"></video>
-          `;
+          // Agar YouTube link hai (embed link)
+          if(videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+              galleryContainer.innerHTML = `
+                <iframe src="${videoUrl}" title="Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              `;
+          } 
+          // Agar Cloudinary ya direct MP4 link hai
+          else {
+              galleryContainer.innerHTML = `
+                <video src="${videoUrl}" poster="${currentAccount.mainImage}" controls playsinline></video>
+              `;
+          }
       } else {
-          // Image Gallery Mode
-          galleryContainer.innerHTML = `<img id="mainGalleryImg" src="${currentAccount.mainImage}">`;
-          thumbs.innerHTML = '<p style="color:#FFF; font-size:12px; width:100%; text-align:center;">Loading gallery...</p>';
-          loadGalleryImages(currentAccount);
+          // Fallback: Agar video nahi hai toh sirf main image dikhao
+          galleryContainer.innerHTML = `<img src="${currentAccount.mainImage}" style="width:100%; height:100%; object-fit:contain;">`;
       }
-    }
-
-    async function loadGalleryImages(account) {
-        const mainImg = document.getElementById('mainGalleryImg');
-        const thumbs = document.getElementById('galleryThumbs');
-        if(!mainImg || !thumbs) return;
-
-        let folderPath = account.folder ? account.folder + '/' : '';
-        let timestamp = new Date().getTime();
-        let promises = [];
-        
-        for (let i = 1; i <= 30; i++) {
-            let imgUrl = BASE_URL + folderPath + i + '.jpg?t=' + timestamp + i;
-            promises.push(
-                new Promise((resolve) => {
-                    let img = new Image();
-                    img.onload = () => resolve({ exists: true, url: imgUrl, index: i });
-                    img.onerror = () => resolve({ exists: false, index: i });
-                    img.src = imgUrl;
-                })
-            );
-        }
-
-        let results = await Promise.all(promises);
-        let validImages = results.filter(r => r.exists).sort((a, b) => a.index - b.index);
-
-        if (validImages.length === 0) {
-            currentGalleryImages = [account.mainImage];
-        } else {
-            currentGalleryImages = validImages.map(r => r.url);
-        }
-
-        mainImg.src = currentGalleryImages[0];
-        thumbs.innerHTML = '';
-        currentGalleryIndex = 0;
-        
-        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
-        
-        currentGalleryImages.forEach((img, i) => {
-            const t = document.createElement('img');
-            t.src = img; 
-            if(i === 0) t.classList.add('active');
-            t.onerror = function() { this.src = fallbackImg; };
-            t.onclick = () => { 
-                currentGalleryIndex = i;
-                mainImg.src = img; 
-                document.querySelectorAll('.gallery-thumbs img').forEach(el => el.classList.remove('active')); 
-                t.classList.add('active'); 
-            };
-            thumbs.appendChild(t);
-        });
-        applyImageBlur();
     }
 
     document.getElementById('detailsBuyBtn').onclick = () => {
