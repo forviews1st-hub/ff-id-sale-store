@@ -5,6 +5,7 @@
     "price": 4000,
     "status": "Available",
     "folder": "id1",
+    "video": "https://res.cloudinary.com/tumhara_account/video/upload/v12345/id1_video.mp4",
     "level": 65,
     "rank": "Grandmaster",
     "emailBind": "Yes (Recoverable)",
@@ -19,6 +20,7 @@
     "price": 3500,
     "status": "Available",
     "folder": "id2",
+    "video": "", 
     "level": 60,
     "rank": "Diamond II",
     "emailBind": "No",
@@ -26,33 +28,5 @@
     "evoGuns": "10 (AK47, MP40)",
     "bundles": "3 Bundles",
     "tags": ["Good ID"]
-  },
-  {
-    "id": "id3",
-    "title": "Level 72 | Grandmaster",
-    "price": 4500,
-    "status": "Available",
-    "folder": "id3",
-    "level": 72,
-    "rank": "Grandmaster",
-    "emailBind": "No",
-    "fbBind": "Yes",
-    "evoGuns": "25+ Evo, Old Rare Skins",
-    "bundles": "10+ Bundles",
-    "tags": ["Old Player", "Rare"]
-  },
-  {
-    "id": "id4",
-    "title": "Level 42 | Diamond II",
-    "price": 600,
-    "status": "Available",
-    "folder": "id4",
-    "level": 42,
-    "rank": "Diamond II",
-    "emailBind": "Yes",
-    "fbBind": "No",
-    "evoGuns": "5",
-    "bundles": "1 Bundle",
-    "tags": ["Budget"]
   }
 ]
