@@ -103,7 +103,7 @@
     .sold-out-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 5; }
     .sold-out-text { background: #FF0000; color: #FFF; font-size: 20px; font-weight: 900; padding: 8px 20px; border-radius: 8px; border: 2px solid #FFF; transform: rotate(-15deg); letter-spacing: 2px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
     
-    .id-image-box { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 12px; overflow: hidden; background: #F3F4F6; display: flex; align-items: center; justify-content: center; border: 1px solid #E5E7EB; }
+    .id-image-box { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 12px; overflow: hidden; background: #1A1A1A; display: flex; align-items: center; justify-content: center; border: 1px solid #E5E7EB; }
     
     /* Video and Image cover styles for Grid Cards */
     .id-image-box img, .id-image-box video { width: 100%; height: 100%; object-fit: cover; object-position: center; }
@@ -124,6 +124,11 @@
     .live-viewers-badge .vcount { color: #FFFFFF; font-weight: 900; font-variant-numeric: tabular-nums; transition: transform 0.25s ease; }
     .live-viewers-badge .vcount.bump { transform: scale(1.18); }
     @keyframes liveDotBlink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+
+    /* Video Loading State */
+    .video-loading-overlay { position: absolute; inset: 0; background: #1A1A1A; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; color: #FFC107; font-weight: 800; font-size: 14px; }
+    .video-loading-spinner { width: 30px; height: 30px; border: 3px solid rgba(255,193,7,0.3); border-top-color: #FFC107; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .reviews-section { margin-bottom: 36px; }
     .reviews-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
@@ -594,12 +599,16 @@
         const card = document.createElement('div');
         card.className = `grid-card ${isSold ? 'sold' : ''}`;
         
-        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
+        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%231A1A1A'/><text x='50%' y='50%' font-family='sans-serif' font-size='20' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>VIDEO LOADING...</text></svg>";
         const viewerBase = viewerState[acc.id] ? viewerState[acc.id].current : 50;
 
-        // Video logic with poster and mobile play support
+        // Improved video tag with loading overlay
         const mediaHtml = acc.video ? `
-            <video src="${acc.video}" poster="${acc.mainImage}" muted loop autoplay playsinline webkit-playsinline preload="auto" class="img-blur" onloadeddata="this.classList.remove('img-blur')"></video>
+            <div class="video-loading-overlay">
+                <div class="video-loading-spinner"></div>
+                Loading Video...
+            </div>
+            <video src="${acc.video}" muted loop autoplay playsinline webkit-playsinline preload="auto" onloadeddata="this.previousElementSibling.style.display='none';"></video>
         ` : `
             <img src="${acc.mainImage}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${fallbackImg}'">
         `;
@@ -654,7 +663,7 @@
           } 
           else {
               galleryContainer.innerHTML = `
-                <video src="${videoUrl}" poster="${currentAccount.mainImage}" controls autoplay muted loop playsinline webkit-playsinline></video>
+                <video src="${videoUrl}" controls autoplay muted loop playsinline webkit-playsinline></video>
               `;
           }
       } else {

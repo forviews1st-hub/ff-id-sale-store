@@ -28,5 +28,35 @@
     "evoGuns": "10 (AK47, MP40)",
     "bundles": "3 Bundles",
     "tags": ["Good ID"]
+  },
+  {
+    "id": "id3",
+    "title": "Level 75 | Heroic | Full Evo",
+    "price": 6000,
+    "status": "Available",
+    "folder": "id3",
+    "video": "https://res.cloudinary.com/rogoptbk/video/upload/q_auto/v1795708572/FREE_FIRE_ID_SALE_ONLY_299_RS_ALL_EVO_GUN_MAX_PRIME_8_ID_LOW_PRICE_ID.mp4",
+    "level": 75,
+    "rank": "Heroic",
+    "emailBind": "Yes (Recoverable)",
+    "fbBind": "No",
+    "evoGuns": "20 (All Max)",
+    "bundles": "10+ Mythic Bundles",
+    "tags": ["Premium", "Heroic"]
+  },
+  {
+    "id": "id4",
+    "title": "Level 50 | Platinum I (Starter ID)",
+    "price": 1500,
+    "status": "Available",
+    "folder": "id4",
+    "video": "",
+    "level": 50,
+    "rank": "Platinum I",
+    "emailBind": "No",
+    "fbBind": "Yes (Recoverable)",
+    "evoGuns": "5 (AK47)",
+    "bundles": "2 Bundles",
+    "tags": ["Budget"]
   }
 ]
