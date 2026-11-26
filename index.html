@@ -597,7 +597,7 @@
         const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
         const viewerBase = viewerState[acc.id] ? viewerState[acc.id].current : 50;
 
-        // Yahan logic change kiya gaya hai: Agar video link hai to video chalega, warna fallback image aayegi
+        // Logic for Video in Grid Cards
         const mediaHtml = acc.video ? `
             <video src="${acc.video}" muted loop autoplay playsinline preload="metadata" class="img-blur" onloadeddata="this.classList.remove('img-blur')"></video>
         ` : `
@@ -653,7 +653,6 @@
               `;
           } 
           else {
-              // Autoplay, muted aur loop add kiya gaya hai taaki modal open hote hi video chale
               galleryContainer.innerHTML = `
                 <video src="${videoUrl}" controls autoplay muted loop playsinline></video>
               `;
