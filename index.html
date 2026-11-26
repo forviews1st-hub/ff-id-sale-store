@@ -597,9 +597,9 @@
         const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='250'><rect width='400' height='250' fill='%23F3F4F6'/><text x='50%' y='50%' font-family='sans-serif' font-size='24' font-weight='bold' fill='%23FFC107' text-anchor='middle' dy='.3em'>FREE FIRE ID</text></svg>";
         const viewerBase = viewerState[acc.id] ? viewerState[acc.id].current : 50;
 
-        // Logic for Video in Grid Cards
+        // Video logic with poster and mobile play support
         const mediaHtml = acc.video ? `
-            <video src="${acc.video}" muted loop autoplay playsinline preload="metadata" class="img-blur" onloadeddata="this.classList.remove('img-blur')"></video>
+            <video src="${acc.video}" poster="${acc.mainImage}" muted loop autoplay playsinline webkit-playsinline preload="auto" class="img-blur" onloadeddata="this.classList.remove('img-blur')"></video>
         ` : `
             <img src="${acc.mainImage}" class="img-blur" onload="this.classList.remove('img-blur')" onerror="this.src='${fallbackImg}'">
         `;
@@ -654,7 +654,7 @@
           } 
           else {
               galleryContainer.innerHTML = `
-                <video src="${videoUrl}" controls autoplay muted loop playsinline></video>
+                <video src="${videoUrl}" poster="${currentAccount.mainImage}" controls autoplay muted loop playsinline webkit-playsinline></video>
               `;
           }
       } else {
